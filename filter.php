@@ -36,19 +36,19 @@ require_once($CFG->dirroot . '/course/renderer.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class filter_courselist extends moodle_text_filter {
+class filter_courselist extends moodle_text_filter {    
 
     const TOKEN = '{{ courselist ';    
 
     function filter($text, array $options = array()) {
-        global $CFG;        
+        global $CFG, $PAGE;        
         
         if (empty($text) or is_numeric($text)) {
             return $text;
         }                        
 
         if (strpos($text, self::TOKEN) !== false) {                   
-            return $this->filter_courselist_apply($text);
+            return $this->apply($text);
         } else {
             return $text;
         }        
@@ -61,7 +61,7 @@ class filter_courselist extends moodle_text_filter {
      * @param string $text
      * @return string
      */
-    protected function filter_courselist_apply($text) {        
+    protected function apply($text) {        
 
         // Split text into parts, keeping delimiter.
         $regex = '@(?=' . self::TOKEN . ')@';
@@ -73,10 +73,10 @@ class filter_courselist extends moodle_text_filter {
                 
                 $atoms = explode(' }}', $part);                
                 if (count($atoms) == 2) {                    
-                    $atoms[0] = $this->filter_courselist_get_courses($atoms[0]);
+                    $atoms[0] = $this->get_courses($atoms[0]);
                     $parts[$key] = implode($atoms);
                 } else {
-                    return $this->filter_courselist_return_error($text);
+                    return $this->return_error($text);
                 }
             }     
         }    
@@ -92,11 +92,18 @@ class filter_courselist extends moodle_text_filter {
      * @param string $text 
      * @return string
      */
-    protected function filter_courselist_get_courses($text) {  
+    protected function get_courses($text) {  
         global $PAGE;
         
+        $coursecards = "";
         $courserenderer = $PAGE->get_renderer('core', 'course');
         $fields = ['*'];
+
+        // Filter param "search": Include search form.
+        if (strpos($text, 'search')) {     
+            $coursecards = $this->searchbox();
+        }
+        
 
         // Filter param "sort": Get sort criteria.
         if (strpos($text, 'sort=')) {                 
@@ -153,12 +160,12 @@ class filter_courselist extends moodle_text_filter {
         }
         
         // Filter param "number": limit number of displayed courses.
-        if (!array_key_exists('courselist_showmore', $_GET) && (strpos($text, 'number='))) {            
+        if (!array_key_exists('courselist_showall', $_GET) && (strpos($text, 'number='))) {            
             $number = explode('number=', $text)[1];
             $number = intval(explode(' ', $number)[0]);
             if (count($courses) > $number) {
                 $courses = array_slice($courses, 0, $number);
-                $showmorebutton = true;                    
+                $showallbutton = true;                    
             }            
         }
 
@@ -187,18 +194,15 @@ class filter_courselist extends moodle_text_filter {
 
                         // Test all 3 possible operators.
                         if ($operator == "=") {
-                            if ($course->$property != $value) {
-                                echo $property . $operator . $value;
+                            if ($course->$property != $value) {                                
                                 unset($courses[$key]);
                             }
                         } else if ($operator == ">" || $operator == "&gt;") {
-                            if ($course->$property < $value) {
-                                echo $property . $operator . $value;
+                            if ($course->$property < $value) {                                
                                 unset($courses[$key]);
                             }
                         } else if ($operator == "<" || $operator == "&lt;") {
-                            if ($course->$property > $value) {
-                                echo $property . $operator . $value;
+                            if ($course->$property > $value) {                                
                                 unset($courses[$key]);
                             }
                         }
@@ -207,26 +211,69 @@ class filter_courselist extends moodle_text_filter {
             }            
         }
 
+        // Filter for searchbox entry.
+        if (array_key_exists('courselist_search', $_GET)) {            
+            if ($searchterm = $_GET['courselist_search']) {
+                $search_properties = ['shortname', 'fullname', 'summary'];
+                
+                foreach ($courses as $key => $course) {
+                    $found = false;
+                    foreach ($search_properties as $property) {
+                        if (stripos($course->$property, $searchterm) !== false) {  
+                            $found = true;
+                        } 
+                    }
+                    if (!$found) {
+                        unset($courses[$key]);
+                    }
+                }                
+            }
+        }
+
         // Filter param "reverse": reverses sort order.
         if (strpos($text, 'reverse')) {   
             $courses = array_reverse($courses, true);
-        }
+        }        
         
         // Render coursecards.
-        $coursecards = $courserenderer->courses_list($courses);
+        $coursecards .= $courserenderer->courses_list($courses);
 
         // Filter param "showall": display button to show all courses.        
-        if (!array_key_exists('courselist_showmore', $_GET) && strpos($text, 'showmore')
-                && $showmorebutton) {
+        if (!array_key_exists('courselist_showall', $_GET) && strpos($text, 'showall')
+                && $showallbutton) {
             $url = "$_SERVER[REQUEST_URI]";
             $url .= (count($_GET) > 0 ? '&' : '?');
-            $url .= 'courselist_showmore=1';
+            $url .= 'courselist_showall=1';
             $coursecards .= '<a class="btn btn-primary" href="' . $url . '">'
-                . get_string('showmore', 'filter_courselist') . '</a>';
+                . get_string('showall', 'filter_courselist') . '</a>';
         } 
 
         return $coursecards;
         
+    }
+
+
+    /**
+     * Renders the searchbox.     
+     *      
+     * @return string
+     */
+    protected function searchbox() {
+        global $CFG;
+        
+        // Get mustache template.
+        $templatePath = $CFG->dirroot . '/filter/courselist/templates/searchbox.mustache';
+        $template = file_get_contents($templatePath);
+
+        // Get parameters.
+        $placeholder = get_string('searchcourses');
+        $searchvalue = (array_key_exists('courselist_search', $_GET)) ? $_GET['courselist_search'] : null;
+
+        // Render searchbox.
+        $data = array('placeholder' => $placeholder, 'searchvalue' => $searchvalue);
+        $mustache = new Mustache_Engine();
+        return $mustache->render($template, $data);
+
     }
 
 
@@ -236,7 +283,7 @@ class filter_courselist extends moodle_text_filter {
      * @param string $text 
      * @return string
      */
-    protected function filter_courselist_return_error($text) {
+    protected function return_error($text) {
         $errormsg = get_string('errormsg', 'filter_courselist');
         return '<div class="alert alert-danger">' . $errormsg . '</div>' . $text;
     }

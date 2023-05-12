@@ -25,6 +25,6 @@
 
 $string['filtername'] = 'Course List';
 $string['errormsg'] = 'Malformed courselist filter found - ignoring all courselist elements in this text.';
-$string['showmore'] = 'Show more courses';
+$string['showall'] = 'Show all courses';
 $string['privacy:metadata'] = 'The Course List filter plugin does not store any personal data.';
 
