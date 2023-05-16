@@ -97,7 +97,7 @@ class filter_courselist extends moodle_text_filter {
         
         $coursecards = "";
         $courserenderer = $PAGE->get_renderer('core', 'course');
-        $fields = ['*'];
+        $fields = 'enddate';
 
         // Filter param "search": Include search form.
         if (strpos($text, 'search')) {     
