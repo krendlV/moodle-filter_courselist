@@ -87,6 +87,65 @@ class filter_courselist extends moodle_text_filter {
 
 
     /**
+     * Returns a list of all courses depending on categoryid and courseid.
+     * 
+     * @param array $courseids
+     * @param array $categoryids
+     * @param string $fields
+     * @param string $sort
+     * @return array $courses
+     * 
+     */
+    protected function get_all_courses($courseids, $categoryids, $fields, $sort) {
+
+        global $DB;
+        
+        // Get by courseid.
+        if ($courseids) {            
+            $courses = $DB->get_records_list('course', 'id', $courseids, $sort, $fields);
+
+            // Filter by category IDs afterwards if necessary.
+            if ($categoryids) {
+                foreach ($courses as $key => $course) {
+                    if (!in_array($course->category, $categoryids)) {
+                        unset($courses[$key]);
+                    }            
+                }
+            }
+
+            // Revert to sort specified in input if sort is empty.
+            if (!$sort) {
+                $unsorted_courses = $courses;
+                $courses = array();
+                foreach ($courseids as $courseid) {
+                    if (array_key_exists($courseid, $unsorted_courses)) {                    
+                        $courses[$courseid] = $unsorted_courses[$courseid];
+                    }
+                }
+            }
+
+            // Remove courseid 1 (front page)
+            unset($courses[1]);
+
+            return $courses;
+
+        // Get by categoryid.
+        } elseif ($categoryids) {
+            return $DB->get_records_list('course', 'category', $categoryids, $sort, $fields);
+        
+        // Get all.
+        } else {
+            $courses = $DB->get_records('course', null, $sort, $fields);
+            
+            // Remove courseid 1 (front page)
+            unset($courses[1]);
+
+            return $courses;
+        }        
+    }
+
+
+    /**
      * Returns a list of courses according to filter params.
      * 
      * @param string $text 
@@ -97,19 +156,22 @@ class filter_courselist extends moodle_text_filter {
         
         $coursecards = "";
         $courserenderer = $PAGE->get_renderer('core', 'course');
-        $fields = 'enddate';
+        $fields = 'id,category,shortname,fullname,idnumber,startdate,enddate,visible,groupmode';
+        $valid_fields = explode(',', $fields);
 
         // Filter param "search": Include search form.
         if (strpos($text, 'search')) {     
             $coursecards = $this->searchbox();
-        }
-        
+        }        
 
         // Filter param "sort": Get sort criteria.
         if (strpos($text, 'sort=')) {                 
             $sort = explode('sort=', $text)[1];
             $sort = explode(' ', $sort)[0];                    
         } else {
+            $sort = null;
+        }
+        if (!in_array($sort, $valid_fields)) {
             $sort = null;
         }
 
@@ -122,41 +184,49 @@ class filter_courselist extends moodle_text_filter {
             $courseids = array();
         }
 
+        // Filter param "categoryids": Only courses from selected categories.
+        if (strpos($text, 'categoryids=[')) {   
+            $categoryids = explode('categoryids=[', $text)[1];
+            $categoryids = explode(']', $categoryids)[0];
+            $categoryids = explode(',', $categoryids);            
+        } else {
+            $categoryids = array();
+        }
+
         // Filter param "enrolled": Get all courses, or only enrolled / not enrolled.
-        if (strpos($text, 'enrolled=true')) {     
+        if (strpos($text, 'enrolled=true')) {                 
             $courses = enrol_get_my_courses($fields, $sort);
-        } else if (strpos($text, 'enrolled=false')) {     
-            $courses = enrol_get_my_courses($fields, $sort, 0, $courseids, true);
+
+            // Filter by category IDs afterwards if necessary.
+            if ($categoryids) {
+                foreach ($courses as $key => $course) {
+                    if (!in_array($course->category, $categoryids)) {
+                        unset($courses[$key]);
+                    }            
+                }
+            }
+        } else if (strpos($text, 'enrolled=false')) {                 
             $enrolled_courses = enrol_get_my_courses();
+            $courses = $this->get_all_courses($courseids, $categoryids, $fields, $sort);
             foreach ($courses as $key => $value) {
                 if (in_array($key, array_keys($enrolled_courses))) {
                     unset($courses[$key]);
                 }
             }
         } else {
-            $courses = enrol_get_my_courses($fields, $sort, 0, $courseids, true);
-        }
-
-        // Filter param "categoryids": Only courses from selected categories.
-        if (strpos($text, 'categoryids=[')) {   
-            $categoryids = explode('categoryids=[', $text)[1];
-            $categoryids = explode(']', $categoryids)[0];
-            $categoryids = explode(',', $categoryids);
-            foreach ($courses as $key => $course) {
-                if (!in_array($course->category, $categoryids)) {
-                    unset($courses[$key]);
-                }            
-            }
+            $courses = $this->get_all_courses($courseids, $categoryids, $fields, $sort);
         }
 
         // Add customfields to courses.        
-        foreach ($courses as $key => $course) {         
-            $handler = course_handler::create($course->id);               
-            $customfields = $handler->export_instance_data($course->id);
-            foreach ($customfields as $customfield) {
-                $fieldname = $customfield->get_shortname();                
-                $course->$fieldname = $customfield->get_data_controller()->get_value();                                                
-            }                    
+        foreach ($courses as $key => $course) {  
+            if (is_object($course)) {       
+                $handler = course_handler::create($course->id);               
+                $customfields = $handler->export_instance_data($course->id);
+                foreach ($customfields as $customfield) {
+                    $fieldname = $customfield->get_shortname();                
+                    $course->$fieldname = $customfield->get_data_controller()->get_value();                                                
+                }   
+            }                 
         }
         
         // Filter param "number": limit number of displayed courses.
@@ -235,8 +305,38 @@ class filter_courselist extends moodle_text_filter {
             $courses = array_reverse($courses, true);
         }        
         
-        // Render coursecards.
-        $coursecards .= $courserenderer->courses_list($courses);
+        
+        if ($courses) {
+
+            // Render coursecards.            
+            $coursecards .= $courserenderer->courses_list($courses);
+
+            // Filter param "title": Include title.
+            if (strpos($text, 'title=')) {                 
+                $title = explode('title=', $text)[1];                
+                $title = explode('"', $title)[1];                
+
+                // Activate other filters.
+                $title = str_replace('[[', '{{', $title);
+                $title = str_replace(']]', '}}', $title);           
+
+                $coursecards = $title . $coursecards;
+            } 
+            
+
+        // Filter param "noresults": include noresults message.
+        } else {
+            if (strpos($text, 'noresults=')) {                 
+                $noresults = explode('noresults=', $text)[1];
+                $noresults = explode('"', $noresults)[1];                
+
+                // Activate other filters.
+                $noresults = str_replace('[[', '{{', $noresults);
+                $noresults = str_replace(']]', '}}', $noresults);           
+
+                $coursecards .= $noresults;
+            }                   
+        }
 
         // Filter param "showall": display button to show all courses.        
         if (!array_key_exists('courselist_showall', $_GET) && strpos($text, 'showall')
