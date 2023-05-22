@@ -1,0 +1,39 @@
+<ul class="list-group">    
+    {{#courses}}
+        <li class="list-group-item course-listitem border-left-0 border-right-0 border-top-0 px-2 rounded-0" data-region="course-content" data-course-id="{{ id }}">
+            <div class="row">
+                <div class="col-md-2 d-flex align-items-center mb-sm-3 mb-md-0">
+                    <a href="/course/view.php?id={{ id }}" tabindex="-1" class="mw-100 w-100">
+                        <div class="card-img dashboard-list-img mw-100" style="background-image: url({{ courseimage }})";>
+                            <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-9 d-flex flex-column">
+                    <a href="https://moodle.develop-modular.com/moodle-4.1/course/view.php?id=2" class="aalink coursename">                
+                        <span class="sr-only">
+                            {{#str}}aria:coursename, core_course{{/str}}
+                        </span>
+                        {{ fullname }}
+                    </a>
+                    <div class="d-flex flex-wrap">
+                        <span class="sr-only">
+                            {{#str}}aria:coursecategory, core_course{{/str}}
+                        </span>
+                        <span class="categoryname">
+                            {{ coursecategory }}
+                        </span>
+                    </div>
+                    {{#courseprogress}}
+                    <div class="text-muted muted d-flex flex-wrap mt-auto">
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="0" style="width: {{ courseprogress }}%" aria-valuemin="0" aria-valuemax="0"></div>
+                        </div>
+                        <p class="mb-0">{{courseprogress}} {{#str}}completepercent, block_myoverview{{/str}}</p>
+                    </div>               
+                    {{/courseprogress}}
+                </div>
+            </div>
+        </li>
+    {{/courses}}
+</ul>

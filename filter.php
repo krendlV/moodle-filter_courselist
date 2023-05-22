@@ -154,8 +154,7 @@ class filter_courselist extends moodle_text_filter {
     protected function get_courses($text) {  
         global $PAGE;
         
-        $coursecards = "";
-        $courserenderer = $PAGE->get_renderer('core', 'course');
+        $coursecards = "";        
         $fields = 'id,category,shortname,fullname,idnumber,startdate,enddate,visible,groupmode';
         $valid_fields = explode(',', $fields);
 
@@ -308,21 +307,51 @@ class filter_courselist extends moodle_text_filter {
         
         if ($courses) {
 
-            // Render coursecards.            
-            $coursecards .= $courserenderer->courses_list($courses);
+            $courserenderer = $PAGE->get_renderer('core', 'course');
 
-            // Filter param "title": Include title.
-            if (strpos($text, 'title=')) {                 
-                $title = explode('title=', $text)[1];                
-                $title = explode('"', $title)[1];                
+            // Render from alternative template.
+            if (strpos($text, 'template=')) {
 
-                // Activate other filters.
-                $title = str_replace('[[', '{{', $title);
-                $title = str_replace(']]', '}}', $title);           
+                global $DB, $OUTPUT, $USER;
 
-                $coursecards = $title . $coursecards;
-            } 
+                // Get name of alttemplate.
+                $alttemplate = explode('template=', $text)[1];
+                $alttemplate = explode(' ', $alttemplate)[0];   
+
+                // Write courses using alternative Mustache template.                                       
+                foreach ($courses as $course) {
+                    
+                    // Get values for additional placeholders.                                        
+                    $course->courseimage = $courserenderer->get_generated_image_for_id($course->id);
+                    $course->coursecategory = $DB->get_record('course_categories', array('id' => $course->category), 'name')->name;
+                    $progress = \core_completion\progress::get_course_progress_percentage($course, $USER->id);                    
+                    if ($progress !== null) {                        
+                        $course->courseprogress = round($progress, 0);
+                    } 
+
+                    // Convert to array for template export.
+                    $data['courses'][] = json_decode(json_encode ( $course ) , true);
+                }     
+
+                $coursecards .= $OUTPUT->render_from_template('filter_courselist/' . $alttemplate, $data);   
+
             
+            // Render coursecards.                            
+            } else {                
+                $coursecards .= $courserenderer->courses_list($courses);
+
+                // Filter param "title": Include title.
+                if (strpos($text, 'title=')) {                 
+                    $title = explode('title=', $text)[1];                
+                    $title = explode('"', $title)[1];                
+
+                    // Activate other filters.
+                    $title = str_replace('[[', '{{', $title);
+                    $title = str_replace(']]', '}}', $title);           
+
+                    $coursecards = $title . $coursecards;
+                } 
+            }            
 
         // Filter param "noresults": include noresults message.
         } else {
@@ -359,11 +388,7 @@ class filter_courselist extends moodle_text_filter {
      * @return string
      */
     protected function searchbox() {
-        global $CFG;
-        
-        // Get mustache template.
-        $templatePath = $CFG->dirroot . '/filter/courselist/templates/searchbox.mustache';
-        $template = file_get_contents($templatePath);
+        global $OUTPUT;
 
         // Get parameters.
         $placeholder = get_string('searchcourses');
@@ -371,9 +396,7 @@ class filter_courselist extends moodle_text_filter {
 
         // Render searchbox.
         $data = array('placeholder' => $placeholder, 'searchvalue' => $searchvalue);
-        $mustache = new Mustache_Engine();
-        return $mustache->render($template, $data);
-
+        return $OUTPUT->render_from_template('filter_courselist/searchbox', $data);           
     }
 
 

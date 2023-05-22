@@ -11,6 +11,7 @@ Note: if you want to use this plugin inside of blocks, you have to turn it ON fo
 Add ''{{ courselist'' to your text, followed by filter parameters. All parameters are optional.
 
 ### Parameters
+
 - title: a title to put as a h3 over the coursecards. if no results are returned, no title will be shown.
 - search: will include a searchbox at the top of the coursecards grid, that searches for text inside the course's shortname, fullname and summary. if more than one coursecard grids exist on this page, the search will be applied to all of them, so it does not make sense to include searchboxes in more than one coursegrid.
 - enrolled: if set to true,  only lists courses the user is enrolled in, if set to false, only lists courses the user is not enrolled in - *eg: enrolled=true*
@@ -23,8 +24,22 @@ Add ''{{ courselist'' to your text, followed by filter parameters. All parameter
 - showall: includes a show all button at the bottom of the coursecards grid.
 - noresults: text to show when there are no results
 
-Example with all possible parameters: 
-{{ courselist title="featured courses" search enrolled=true categoryids=[1,2] courseids=[3,4] sort=startdate reverse filters=[startdate<NOW,mycustomfield=1] number=23 showall noresults="no courses found"}}
+### Using alternative templates.
+
+You can specify an alternative mustache template using the paramter **template**, eg *template=list*.
+
+This will use an alternative Mustache template instead of the course cards. You can put your own templates into the /templates subfolder, or use the existing ones. For now, there is one alternative template - "list", that renders similar to the list view of the myoverview block.
+
+In addition to the standard fields of the course DB item, you can use these values in mustache templates:
+
+- {{ courseimage }}
+- {{ coursecategory }}
+- {{ courseprogress }}
+
+### Example with all possible parameters
+
+{{ courselist title="featured courses" search enrolled=true categoryids=[1,2] courseids=[3,4] sort=startdate reverse filters=[startdate<NOW,mycustomfield=1] number=23 showall noresults="no courses found" template=list }}
 
 ### A note on including custom course fields
+
 - When including custom course fields, be aware of how the values are saved, in order for filters to work. For example, the value of a dropdown menu is not the text of the selected option, but its index.
