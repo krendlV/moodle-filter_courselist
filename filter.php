@@ -154,13 +154,13 @@ class filter_courselist extends moodle_text_filter {
     protected function get_courses($text) {  
         global $PAGE;
         
-        $coursecards = "";        
+        $output = "";        
         $fields = 'id,category,shortname,fullname,idnumber,startdate,enddate,visible,groupmode';
         $valid_fields = explode(',', $fields);
 
         // Filter param "search": Include search form.
         if (strpos($text, 'search')) {     
-            $coursecards = $this->searchbox();
+            $output = $this->searchbox();
         }        
 
         // Filter param "sort": Get sort criteria.
@@ -302,9 +302,9 @@ class filter_courselist extends moodle_text_filter {
         // Filter param "reverse": reverses sort order.
         if (strpos($text, 'reverse')) {   
             $courses = array_reverse($courses, true);
-        }        
+        }                
         
-        
+        // Process courses.
         if ($courses) {
 
             $courserenderer = $PAGE->get_renderer('core', 'course');
@@ -328,17 +328,17 @@ class filter_courselist extends moodle_text_filter {
                     if ($progress !== null) {                        
                         $course->courseprogress = round($progress, 0);
                     } 
+                    $course->startdate = userdate($course->startdate);
+                    $course->enddate = userdate($course->enddate);                    
 
                     // Convert to array for template export.
                     $data['courses'][] = json_decode(json_encode ( $course ) , true);
                 }     
-
-                $coursecards .= $OUTPUT->render_from_template('filter_courselist/' . $alttemplate, $data);   
-
+                $output .= $OUTPUT->render_from_template('filter_courselist/' . $alttemplate, $data);   
             
             // Render coursecards.                            
             } else {                
-                $coursecards .= $courserenderer->courses_list($courses);
+                $output .= $courserenderer->courses_list($courses);
 
                 // Filter param "title": Include title.
                 if (strpos($text, 'title=')) {                 
@@ -349,7 +349,7 @@ class filter_courselist extends moodle_text_filter {
                     $title = str_replace('[[', '{{', $title);
                     $title = str_replace(']]', '}}', $title);           
 
-                    $coursecards = $title . $coursecards;
+                    $output = $title . $output;
                 } 
             }            
 
@@ -363,7 +363,7 @@ class filter_courselist extends moodle_text_filter {
                 $noresults = str_replace('[[', '{{', $noresults);
                 $noresults = str_replace(']]', '}}', $noresults);           
 
-                $coursecards .= $noresults;
+                $output .= $noresults;
             }                   
         }
 
@@ -373,11 +373,11 @@ class filter_courselist extends moodle_text_filter {
             $url = "$_SERVER[REQUEST_URI]";
             $url .= (count($_GET) > 0 ? '&' : '?');
             $url .= 'courselist_showall=1';
-            $coursecards .= '<a class="btn btn-primary" href="' . $url . '">'
+            $output .= '<a class="btn btn-primary" href="' . $url . '">'
                 . get_string('showall', 'filter_courselist') . '</a>';
         } 
 
-        return $coursecards;
+        return $output;
         
     }
 
