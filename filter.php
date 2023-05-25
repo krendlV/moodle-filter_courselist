@@ -319,17 +319,20 @@ class filter_courselist extends moodle_text_filter {
                 $alttemplate = explode(' ', $alttemplate)[0];   
 
                 // Write courses using alternative Mustache template.                                       
-                foreach ($courses as $course) {
-                    
-                    // Get values for additional placeholders.                                        
-                    $course->courseimage = $courserenderer->get_generated_image_for_id($course->id);
+                foreach ($courses as $course) {                    
+
+                    if ($image = \cache::make('core', 'course_image')->get($course->id)) {
+                        $course->courseimage = $image;
+                    } else {
+                        $course->courseimage = $courserenderer->get_generated_image_for_id($course->id);
+                    }
                     $course->coursecategory = $DB->get_record('course_categories', array('id' => $course->category), 'name')->name;
                     $progress = \core_completion\progress::get_course_progress_percentage($course, $USER->id);                    
                     if ($progress !== null) {                        
                         $course->courseprogress = round($progress, 0);
                     } 
                     $course->startdate = userdate($course->startdate);
-                    $course->enddate = userdate($course->enddate);                    
+                    $course->enddate = userdate($course->enddate);                        
 
                     // Convert to array for template export.
                     $data['courses'][] = json_decode(json_encode ( $course ) , true);
