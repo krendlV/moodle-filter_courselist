@@ -71,7 +71,9 @@ class filter_courselist extends moodle_text_filter {
             
             if (strpos($part, self::TOKEN) === 0) {                   
                 
-                $atoms = explode(' }}', $part);                
+                $atoms = explode(' }}', $part);    
+                
+                // Check filter integrity.
                 if (count($atoms) == 2) {                    
                     $atoms[0] = $this->get_courses($atoms[0]);
                     $parts[$key] = implode($atoms);
@@ -248,9 +250,9 @@ class filter_courselist extends moodle_text_filter {
                 // Parse filter into property, operator and value.
                 $filter = trim($filter);                                                
                 $parts = preg_split('/([><=]|&lt;|&gt;)/', $filter, -1, PREG_SPLIT_DELIM_CAPTURE);                                
-                $property = $parts[0];
-                $operator = $parts[1];
-                $value = $parts[2];
+                $property = trim($parts[0]);
+                $operator = trim($parts[1]);
+                $value = trim($parts[2]);
 
                 // Replace NOW value.
                 if ($value == "NOW") {
