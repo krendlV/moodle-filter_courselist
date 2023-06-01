@@ -220,9 +220,9 @@ class filter_courselist extends moodle_text_filter {
 
         // Add customfields to courses.        
         foreach ($courses as $key => $course) {  
-            if (is_object($course)) {       
+            if (is_object($course)) {                       
                 $handler = course_handler::create($course->id);               
-                $customfields = $handler->export_instance_data($course->id);
+                $customfields = $handler->export_instance_data($course->id, true);
                 foreach ($customfields as $customfield) {
                     $fieldname = $customfield->get_shortname();                
                     $course->$fieldname = $customfield->get_data_controller()->get_value();                                                
