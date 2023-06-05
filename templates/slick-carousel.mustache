@@ -1,0 +1,113 @@
+<link rel="stylesheet" type="text/css" href="{{ wwwroot }}/filter/courselist/lib/slick/slick.css"/>
+<link rel="stylesheet" type="text/css" href="{{ wwwroot }}/filter/courselist/lib/slick/slick-theme.css"/>
+
+<style>
+.slick-prev {
+    left: 40px;
+    z-index: 99999;
+}
+.slick-next {
+    right: 40px;
+    z-index: 99999;
+}
+.slick-prev:before, .slick-next:before {
+    font-size: 40px;
+}
+.slick-slide {
+    padding: 20px;
+}
+</style>
+
+<div class="slick-carousel responsive card-deck">
+
+    {{#courses}}
+    <div class="card dashboard-card m-2 course-{{{id}}}{{{categories}}}" role="listitem"
+        data-region="course-content"
+        data-course-id="{{{id}}}">
+        <a href="{{viewurl}}" tabindex="-1">
+            <div class="card-img dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
+                <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
+            </div>
+        </a>
+        <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
+            <div class="d-flex align-items-start">
+                <div class="w-100 text-truncate">
+                    {{#showshortname}}
+                        <div class="text-muted muted d-flex mb-1 flex-wrap">
+                            <span class="sr-only">
+                                {{#str}}aria:courseshortname, core_course{{/str}}
+                            </span>
+                            <div>
+                                {{{shortname}}}
+                            </div>
+                            {{$divider}}{{/divider}}
+                        </div>
+                    {{/showshortname}}
+                    <a href="{{viewurl}}" class="aalink coursename mr-2 mb-1">
+                        {{> core_course/favouriteicon }}
+                        <span class="sr-only">
+                                {{#str}}aria:coursename, core_course{{/str}}
+                            </span>
+                        {{fullname}}
+                    </a>
+                    <div class="text-muted muted d-flex flex-wrap">
+                        {{$coursecategory}}{{/coursecategory}}
+                    </div>
+                    {{^visible}}
+                        <div class="d-flex flex-wrap">
+                            <span class="badge badge-info">{{#str}} hiddenfromstudents {{/str}}</span>
+                        </div>
+                    {{/visible}}
+                </div>
+            </div>
+        </div>
+        <div class="d-flex align-items-start">
+            {{$progress}}{{/progress}}
+            {{$menu}}{{/menu}}
+        </div>
+    </div>
+    {{/courses}}
+
+</div>
+				
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script src="{{wwwroot}}/filter/courselist/lib/slick/slick.js"></script>
+
+<script>
+
+$('.responsive').slick({
+  dots: true,
+  infinite: false,
+  speed: 300,
+  slidesToShow: 4,
+  slidesToScroll: 4,
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        infinite: true,
+        dots: true
+      }
+    },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 2
+      }
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1
+      }
+    }    
+  ]
+});
+
+</script>

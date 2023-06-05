@@ -24,22 +24,31 @@ Add ''{{ courselist'' to your text, followed by filter parameters. All parameter
 - showall: includes a show all button at the bottom of the coursecards grid.
 - noresults: text to show when there are no results
 
+### A note on including custom course fields
+
+- When including custom course fields, be aware of how the values are saved, in order for filters to work. For example, the value of a dropdown menu is not the text of the selected option, but its index.
+
 ### Using alternative templates.
 
 You can specify an alternative mustache template using the paramter **template**, eg *template=list*.
 
-This will use an alternative Mustache template instead of the course cards. You can put your own templates into the /templates subfolder, or use the existing ones. For now, there is one alternative template - "list", that renders similar to the list view of the myoverview block.
+This will use an alternative Mustache template instead of the built-in Moodlecourse cards. You can put your own templates into the /templates subfolder, or use the existing ones. 
+
+### Included templates
+
+- list: similar to the "list" view of the myoverview block
+- teaser: similar to list, but smaller, usable in sidebars
+- slick-carousel: a carousel using the awesome slick carousel - https://kenwheeler.github.io/slick/
+- simple-list: a simple html list of course links
+- simple-list-unlinked: a simple html list of course names
 
 In addition to the standard fields of the course DB item, you can use these values in mustache templates:
 
-- {{ courseimage }}
 - {{ coursecategory }}
+- {{ courseimage }}
 - {{ courseprogress }}
+- {{ wwwroot }}
 
-### Example with all possible parameters
+## Usage example with all possible parameters
 
 {{ courselist title="featured courses" search enrolled=true categoryids=[1,2] courseids=[3,4] sort=startdate reverse filters=[startdate<NOW,mycustomfield=1] number=23 showall noresults="no courses found" template=list }}
-
-### A note on including custom course fields
-
-- When including custom course fields, be aware of how the values are saved, in order for filters to work. For example, the value of a dropdown menu is not the text of the selected option, but its index.

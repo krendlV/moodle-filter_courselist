@@ -314,7 +314,7 @@ class filter_courselist extends moodle_text_filter {
             // Render from alternative template.
             if (strpos($text, 'template=')) {
 
-                global $DB, $OUTPUT, $USER;
+                global $CFG, $DB, $OUTPUT, $USER;
 
                 // Get name of alttemplate.
                 $alttemplate = explode('template=', $text)[1];
@@ -339,6 +339,7 @@ class filter_courselist extends moodle_text_filter {
                     // Convert to array for template export.
                     $data['courses'][] = json_decode(json_encode ( $course ) , true);
                 }     
+                $data['wwwroot'] = $CFG->wwwroot;
                 $output .= $OUTPUT->render_from_template('filter_courselist/' . $alttemplate, $data);   
             
             // Render coursecards.                            
