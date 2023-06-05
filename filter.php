@@ -229,16 +229,6 @@ class filter_courselist extends moodle_text_filter {
                 }   
             }                 
         }
-        
-        // Filter param "number": limit number of displayed courses.
-        if (!array_key_exists('courselist_showall', $_GET) && (strpos($text, 'number='))) {            
-            $number = explode('number=', $text)[1];
-            $number = intval(explode(' ', $number)[0]);
-            if (count($courses) > $number) {
-                $courses = array_slice($courses, 0, $number);
-                $showallbutton = true;                    
-            }            
-        }
 
         // Filter param "filter": custom filters.
         if (strpos($text, 'filters=[')) {                 
@@ -304,7 +294,17 @@ class filter_courselist extends moodle_text_filter {
         // Filter param "reverse": reverses sort order.
         if (strpos($text, 'reverse')) {   
             $courses = array_reverse($courses, true);
-        }                
+        }            
+        
+        // Filter param "number": limit number of displayed courses.
+        if (!array_key_exists('courselist_showall', $_GET) && (strpos($text, 'number='))) {            
+            $number = explode('number=', $text)[1];
+            $number = intval(explode(' ', $number)[0]);
+            if (count($courses) > $number) {
+                $courses = array_slice($courses, 0, $number);
+                $showallbutton = true;                    
+            }            
+        }
         
         // Process courses.
         if ($courses) {
