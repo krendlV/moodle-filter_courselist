@@ -2,23 +2,28 @@
 <link rel="stylesheet" type="text/css" href="{{ wwwroot }}/filter/courselist/lib/slick/slick-theme.css"/>
 
 <style>
-.slick-prev {
-    left: 40px;
+.slick-prev {        
+    width: 40px;
+    height: 40px;
     z-index: 99999;
+    left: -30px;
 }
-.slick-next {
-    right: 40px;
+.slick-next {        
+    width: 40px;
+    height: 40px;    
     z-index: 99999;
+    right: -30px;
 }
 .slick-prev:before, .slick-next:before {
+    color: var(--primary);
     font-size: 40px;
 }
-.slick-slide {
-    padding: 20px;
+.slick-slide {    
+    padding: 16px;
 }
 </style>
 
-<div class="slick-carousel responsive card-deck">
+<div id={{ uniqid }} class="slick-carousel responsive card-deck mx-5">
 
     {{#courses}}
     <div class="card dashboard-card course-{{{id}}}{{{categories}}}" role="listitem"
@@ -27,12 +32,12 @@
         <div class="tm-moove-category course-category">
             <a href="/course/index.php?categoryid={{category}}">{{coursecategory}}</a>
         </div>
-        <a href="/course/view.php?id={{id}}" tabindex="-1">
+        <a href="{{wwwroot}}/course/view.php?id={{id}}" tabindex="-1">
             <div class="card-img dashboard-card-img{{defaultimgclass}}" style='background-image: url("{{{courseimage}}}");'>                
                 <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
             </div>
         </a>
-        <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
+        <div style="height: 200px;" class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
             <div class="d-flex align-items-start">
                 <div class="w-100">
                     {{#showshortname}}
@@ -46,13 +51,16 @@
                             {{$divider}}{{/divider}}
                         </div>
                     {{/showshortname}}
-                    <a href="/course/view.php?id={{id}}" class="aalink coursename mr-2 mb-1">
+                    <a href="{{wwwroot}}/course/view.php?id={{id}}" class="aalink coursename mr-2 mb-1">
                         {{> core_course/favouriteicon }}
                         <span class="sr-only">
                                 {{#str}}aria:coursename, core_course{{/str}}
                             </span>
                         {{fullname}}
                     </a>
+                    <div class="course-summary text-truncate">
+                        {{{summary}}}
+                    </div>
                     {{^visible}}
                         <div class="d-flex flex-wrap">
                             <span class="badge badge-info">{{#str}} hiddenfromstudents {{/str}}</span>
@@ -61,7 +69,14 @@
                 </div>
             </div>
         </div>
-        
+        {{#courseprogress}}
+        <div class="card-footer dashboard-card-footer border-0 bg-white w-100">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="{{progress}}" style="width: {{progress}}%" aria-valuemin="0" aria-valuemax="{{progress}}"></div>
+            </div>
+            <p class="mb-0">{{courseprogress}}% complete</p>
+        </div>
+        {{/courseprogress}}
     </div>
 
     {{/courses}}
@@ -107,5 +122,42 @@ $('.responsive').slick({
     }    
   ]
 });
+
+
+setMaxHeightForCards()
+
+window.addEventListener('resize', setMaxHeightForCards)
+
+function setMaxHeightForCards() {
+    console.log('Adjusting card height')
+    
+    var slideshow = document.getElementById("{{ uniqid }}")
+    if (slideshow) {
+        var cards = slideshow.getElementsByClassName('card')
+        var padding
+        var height = 0
+        
+        // Get padding.
+        if (cards) {    
+            
+            // Get max height.
+            for (let i = 0; i < cards.length; i++) {  
+                if (cards[i].offsetHeight > height) {
+                    cards[i].style.minHeight = 0;
+                    padding = cards[i].offsetHeight - cards[i].offsetHeight
+                    height = cards[i].offsetHeight
+                }  
+            }
+            
+            // Set max height.
+            height = height + padding
+            height = height + 'px'
+            for (let i = 0; i < cards.length; i++) {  
+                cards[i].style.minHeight = height;
+            }
+        }
+    }
+}
+
 
 </script>

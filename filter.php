@@ -157,7 +157,7 @@ class filter_courselist extends moodle_text_filter {
         global $PAGE;
         
         $output = "";        
-        $fields = 'id,category,shortname,fullname,idnumber,startdate,enddate,visible,groupmode';
+        $fields = 'id,category,shortname,fullname,idnumber,startdate,enddate,visible,groupmode,summary';
         $valid_fields = explode(',', $fields);
 
         // Filter param "search": Include search form.
