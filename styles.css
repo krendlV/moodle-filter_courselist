@@ -1,0 +1,4 @@
+/* fix for moove cards */
+.pagelayout-frontpage .dashboard-card.w-100, .pagelayout-coursecategory .dashboard-card.w100 {
+  width: 100% !important;
+}

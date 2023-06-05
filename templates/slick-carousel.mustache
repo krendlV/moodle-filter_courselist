@@ -20,13 +20,14 @@
 }
 .slick-slide {    
     padding: 16px;
+    max-width: 300px;
 }
 </style>
 
 <div id={{ uniqid }} class="slick-carousel responsive card-deck mx-5">
 
     {{#courses}}
-    <div class="card dashboard-card course-{{{id}}}{{{categories}}}" role="listitem"
+    <div class="card dashboard-card course-{{{id}}}{{{categories}}} w-100" role="listitem"
         data-region="course-content"
         data-course-id="{{{id}}}">
         <div class="tm-moove-category course-category">
@@ -129,7 +130,7 @@ setMaxHeightForCards()
 window.addEventListener('resize', setMaxHeightForCards)
 
 function setMaxHeightForCards() {
-    console.log('Adjusting card height')
+    console.log('Adjusting card height for carousel')
     
     var slideshow = document.getElementById("{{ uniqid }}")
     if (slideshow) {
@@ -153,11 +154,14 @@ function setMaxHeightForCards() {
             height = height + padding
             height = height + 'px'
             for (let i = 0; i < cards.length; i++) {  
-                cards[i].style.minHeight = height;
+                cards[i].style.minHeight = height;                
             }
         }
     }
 }
 
+// Fix width inside text labels.
+let pageWidth = document.getElementById("page-content").offsetWidth + "px"
+document.getElementById("{{ uniqid }}").style.maxWidth = pageWidth
 
 </script>
