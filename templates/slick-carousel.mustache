@@ -2,6 +2,10 @@
 <link rel="stylesheet" type="text/css" href="{{ wwwroot }}/filter/courselist/lib/slick/slick-theme.css"/>
 
 <style>
+.slick-carousel-container {
+    margin: 0 30px;
+    height: 1000px;
+}
 .slick-prev {        
     width: 40px;
     height: 40px;
@@ -20,68 +24,71 @@
 }
 .slick-slide {    
     padding: 16px;
-    max-width: 300px;
 }
 </style>
 
-<div id={{ uniqid }} class="slick-carousel responsive card-deck" style="margin: 0 30px;">
 
-    {{#courses}}
-    <div class="card dashboard-card course-{{{id}}}{{{categories}}} w-100" role="listitem"
-        data-region="course-content"
-        data-course-id="{{{id}}}">
-        <div class="tm-moove-category course-category">
-            <a href="/course/index.php?categoryid={{category}}">{{coursecategory}}</a>
-        </div>
-        <a href="{{wwwroot}}/course/view.php?id={{id}}" tabindex="-1">
-            <div class="card-img dashboard-card-img{{defaultimgclass}}" style='background-image: url("{{{courseimage}}}");'>                
-                <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
-            </div>
-        </a>
-        <div style="height: 200px;" class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
-            <div class="d-flex align-items-start">
-                <div class="w-100">
-                    {{#showshortname}}
-                        <div class="text-muted muted d-flex mb-1 flex-wrap">
-                            <span class="sr-only">
-                                {{#str}}aria:courseshortname, core_course{{/str}}
-                            </span>
-                            <div>
-                                {{{shortname}}}
-                            </div>
-                            {{$divider}}{{/divider}}
-                        </div>
-                    {{/showshortname}}
-                    <a href="{{wwwroot}}/course/view.php?id={{id}}" class="aalink coursename mr-2 mb-1">
-                        {{> core_course/favouriteicon }}
-                        <span class="sr-only">
-                                {{#str}}aria:coursename, core_course{{/str}}
-                            </span>
-                        {{fullname}}
-                    </a>
-                    <div class="course-summary text-truncate">
-                        {{{summary}}}
-                    </div>
-                    {{^visible}}
-                        <div class="d-flex flex-wrap">
-                            <span class="badge badge-info">{{#str}} hiddenfromstudents {{/str}}</span>
-                        </div>
-                    {{/visible}}
+<div id={{uniqid}}-container class="slick-carousel-container">
+    <div id={{uniqid}} class="slick-carousel responsive card-deck">
+
+        {{#courses}}
+        <div>
+            <div class="card dashboard-card course-{{{id}}}{{{categories}}} w-100" role="listitem"
+                data-region="course-content"
+                data-course-id="{{{id}}}">
+                <div class="tm-moove-category course-category">
+                    <a href="/course/index.php?categoryid={{category}}">{{coursecategory}}</a>
                 </div>
+                <a href="{{wwwroot}}/course/view.php?id={{id}}" tabindex="-1">
+                    <div class="card-img dashboard-card-img{{defaultimgclass}}" style='background-image: url("{{{courseimage}}}");'>                
+                        <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
+                    </div>
+                </a>
+                <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
+                    <div class="d-flex align-items-start">
+                        <div class="w-100">
+                            {{#showshortname}}
+                                <div class="text-muted muted d-flex mb-1 flex-wrap">
+                                    <span class="sr-only">
+                                        {{#str}}aria:courseshortname, core_course{{/str}}
+                                    </span>
+                                    <div>
+                                        {{{shortname}}}
+                                    </div>
+                                    {{$divider}}{{/divider}}
+                                </div>
+                            {{/showshortname}}
+                            <a href="{{wwwroot}}/course/view.php?id={{id}}" class="aalink coursename mr-2 mb-1">
+                                {{> core_course/favouriteicon }}
+                                <span class="sr-only">
+                                        {{#str}}aria:coursename, core_course{{/str}}
+                                    </span>
+                                {{fullname}}
+                            </a>
+                            <div class="course-summary">
+                                {{{summary}}}
+                            </div>
+                            {{^visible}}
+                                <div class="d-flex flex-wrap">
+                                    <span class="badge badge-info">{{#str}} hiddenfromstudents {{/str}}</span>
+                                </div>
+                            {{/visible}}
+                        </div>
+                    </div>
+                </div>
+                {{#courseprogress}}
+                <div class="card-footer dashboard-card-footer border-0 bg-white w-100">
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="{{progress}}" style="width: {{progress}}%" aria-valuemin="0" aria-valuemax="{{progress}}"></div>
+                    </div>
+                    <p class="mb-0">{{courseprogress}}% complete</p>
+                </div>
+                {{/courseprogress}}
             </div>
         </div>
-        {{#courseprogress}}
-        <div class="card-footer dashboard-card-footer border-0 bg-white w-100">
-            <div class="progress">
-                <div class="progress-bar" role="progressbar" aria-valuenow="{{progress}}" style="width: {{progress}}%" aria-valuemin="0" aria-valuemax="{{progress}}"></div>
-            </div>
-            <p class="mb-0">{{courseprogress}}% complete</p>
-        </div>
-        {{/courseprogress}}
+        {{/courses}}
+
     </div>
-
-    {{/courses}}
-
 </div>
 				
 
@@ -96,76 +103,71 @@ $('.responsive').slick({
   infinite: false,
   speed: 300,
   slidesToShow: 4,
-  slidesToScroll: 4,
+  slidesToScroll: 3,
   responsive: [
     {
-      breakpoint: 1024,
+      breakpoint: 1600,
       settings: {
         slidesToShow: 3,
-        slidesToScroll: 3,
+        slidesToScroll: 2,
         infinite: true,
         dots: true
       }
     },
     {
-      breakpoint: 600,
-      settings: {
-        slidesToShow: 2,
-        slidesToScroll: 2
-      }
-    },
-    {
-      breakpoint: 480,
+      breakpoint: 991,
       settings: {
         slidesToShow: 1,
         slidesToScroll: 1
       }
-    }    
+    },  
   ]
 });
 
 
-setMaxHeightForCards()
+setCarouselDimensions()
 
-window.addEventListener('resize', setMaxHeightForCards)
+const resizeObserver = new ResizeObserver(entries => {
 
-function setMaxHeightForCards() {
     console.log('Adjusting card height and total width for carousel')
-    
-    var slideshow = document.getElementById("{{ uniqid }}")
-    if (slideshow) {
-        var cards = slideshow.getElementsByClassName('card')
-        var padding
-        var height = 0
-        
-        // Get padding.
-        if (cards) {    
-            
-            // Get max height.
-            for (let i = 0; i < cards.length; i++) {  
-                if (cards[i].offsetHeight > height) {
-                    cards[i].style.minHeight = 0;
-                    padding = cards[i].offsetHeight - cards[i].offsetHeight
-                    height = cards[i].offsetHeight
-                }  
-            }
-            
-            // Set max height.
-            height = height + padding
-            height = height + 'px'
-            for (let i = 0; i < cards.length; i++) {  
-                cards[i].style.minHeight = height;                
-            }
-        }
-    }
 
-    // Fix width inside text labels.
+    let slideshow = document.getElementById("{{ uniqid }}")    
+
+    // Fix height for cards.
+    let cards = slideshow.getElementsByClassName('card')    
+    let height = 0    
+    
+    if (cards) {    
+        
+        // Get max height.
+        for (let i = 0; i < cards.length; i++) {  
+            if (cards[i].offsetHeight > height) {                
+                cards[i].style.minHeight = 0;                
+                height = cards[i].offsetHeight
+            }  
+        }
+        
+        // Set min height.        
+        height = height + 'px'        
+        for (let i = 0; i < cards.length; i++) {  
+            cards[i].style.minHeight = height;                
+        }
+    }   
+
+    // Fix carousel width inside text labels.
     let pageWidth = document.getElementById("page-content").offsetWidth
     pageWidth = pageWidth - 60
     pageWidth = pageWidth + "px"
-    document.getElementById("{{ uniqid }}").style.maxWidth = pageWidth
-}
+    slideshow.style.width = pageWidth       
 
+    // Fix carousel height inside text labels.
+    let totalHeight = slideshow.offsetHeight + 30
+    totalHeight = totalHeight + "px"
+    console.log(totalHeight)
+    document.getElementById("{{uniqid}}-container").style.height = totalHeight 
 
+});
+
+resizeObserver.observe(document.getElementById("page-content"));
 
 </script>
