@@ -158,10 +158,12 @@ function setMaxHeightForCards() {
             }
         }
     }
+
+    // Fix width inside text labels.
+    let pageWidth = document.getElementById("page-content").offsetWidth + "px"
+    document.getElementById("{{ uniqid }}").style.maxWidth = pageWidth
 }
 
-// Fix width inside text labels.
-let pageWidth = document.getElementById("page-content").offsetWidth + "px"
-document.getElementById("{{ uniqid }}").style.maxWidth = pageWidth
+
 
 </script>
