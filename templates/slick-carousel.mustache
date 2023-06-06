@@ -24,7 +24,7 @@
 }
 </style>
 
-<div id={{ uniqid }} class="slick-carousel responsive card-deck mx-5">
+<div id={{ uniqid }} class="slick-carousel responsive card-deck" style="margin: 0 30px;">
 
     {{#courses}}
     <div class="card dashboard-card course-{{{id}}}{{{categories}}} w-100" role="listitem"
@@ -130,7 +130,7 @@ setMaxHeightForCards()
 window.addEventListener('resize', setMaxHeightForCards)
 
 function setMaxHeightForCards() {
-    console.log('Adjusting card height for carousel')
+    console.log('Adjusting card height and total width for carousel')
     
     var slideshow = document.getElementById("{{ uniqid }}")
     if (slideshow) {
@@ -160,7 +160,9 @@ function setMaxHeightForCards() {
     }
 
     // Fix width inside text labels.
-    let pageWidth = document.getElementById("page-content").offsetWidth + "px"
+    let pageWidth = document.getElementById("page-content").offsetWidth
+    pageWidth = pageWidth - 60
+    pageWidth = pageWidth + "px"
     document.getElementById("{{ uniqid }}").style.maxWidth = pageWidth
 }
 
