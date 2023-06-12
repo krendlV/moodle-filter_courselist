@@ -31,8 +31,8 @@
 </style>
 
 
-<div id=carousel-container-{{uniqid}} class="slick-carousel-container">
-    <div id=carousel-{{uniqid}} class="slick-carousel responsive card-deck">
+<div id="carousel-container-{{uniqid}}" class="slick-carousel-container hidden">
+    <div id="carousel-{{uniqid}}" class="slick-carousel responsive card-deck">
 
         {{#courses}}
         <div>
@@ -95,74 +95,6 @@
 </div>
 				
 {{#js}}    
-    require(['filter_courselist/slick_carousel'], (module) => module.init());
-    require(['filter_courselist/resize_cards'], (module) => module.init());
+    require(['filter_courselist/resize_cards'], (module) => module.init(document.getElementById("carousel-{{uniqid}}")));
+    require(['filter_courselist/slick_carousel'], (module) => module.init("#carousel-{{uniqid}}"));    
 {{/js}}
-
-<script>
-
-function adjustCarouselDimensions() {    
-
-    let slideshows = document.getElementsByClassName("slick-carousel")    
-
-    for (let j = 0; j < slideshows.length; j++) {
-
-        // Fix height for cards.
-        let cards = slideshows[j].getElementsByClassName('card')    
-        let height = 0    
-        
-        if (cards) {    
-            
-            // Get max height.
-            for (let i = 0; i < cards.length; i++) {  
-                if (cards[i].offsetHeight > height) {                
-                    cards[i].style.minHeight = 0;                
-                    height = cards[i].offsetHeight
-                }  
-            }
-            
-            // Set min height.        
-            heightPx = height + 'px'        
-            for (let i = 0; i < cards.length; i++) {  
-                cards[i].style.minHeight = heightPx;                
-            }
-        }   
-
-        // Fix carousel width inside text labels.
-        let labelFix = slideshows[j].parentElement.parentElement.parentElement.parentElement
-        if (labelFix) {            
-            if (labelFix.classList.contains('description-inner')) {
-                if (!labelFix.classList.contains('w-100')) {
-                    console.log('fixing width inside labels')
-                    labelFix.classList.add('w-100')
-                }                
-            }
-        }                
-
-        // Fix carousel height inside text labels.        
-        let totalHeight = height + 100
-        console.log("carousel " + j + " height set to " + totalHeight)
-        totalHeightPx = totalHeight + "px"                
-        slideshows[j].parentElement.style.height = totalHeightPx 
-
-    }
-}
-
-adjustCarouselDimensions()
-
-if (typeof slickResizeObserver === 'undefined') {
-
-    const slickResizeObserver = new ResizeObserver(entries => {
-
-        console.log('Adjusting card height and total width for slick carousel')
-
-        adjustCarouselDimensions()
-
-    });
-
-    slickResizeObserver.observe(document.getElementById("page-content"));
-
-}
-
-
-</script>
