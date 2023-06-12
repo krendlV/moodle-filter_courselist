@@ -10,13 +10,13 @@
     width: 40px;
     height: 40px;
     z-index: 99999;
-    left: -30px;
+    left: 0;
 }
 .slick-carousel.responsive .slick-next {        
     width: 40px;
     height: 40px;    
     z-index: 99999;
-    right: -30px;
+    right: 0px;
 }
 .slick-carousel.responsive .slick-prev:before, .slick-carousel.responsive .slick-next:before {
     color: var(--primary);
@@ -24,6 +24,9 @@
 }
 .slick-carousel.responsive .slick-slide {    
     padding: 16px;
+}
+.slick-carousel.responsive .slick-slide .dashboard-card {
+    margin: 0 !important;
 }
 </style>
 
@@ -126,19 +129,26 @@ function adjustCarouselDimensions() {
         }   
 
         // Fix carousel width inside text labels.
-        let pageWidth = document.getElementById("page-content").offsetWidth
-        pageWidth = pageWidth - 60
-        pageWidth = pageWidth + "px"
-        slideshows[j].style.width = pageWidth       
+        let labelFix = slideshows[j].parentElement.parentElement.parentElement.parentElement
+        if (labelFix) {            
+            if (labelFix.classList.contains('description-inner')) {
+                if (!labelFix.classList.contains('w-100')) {
+                    console.log('fixing width inside labels')
+                    labelFix.classList.add('w-100')
+                }                
+            }
+        }                
 
-        // Fix carousel height inside text labels.
-        // let totalHeight = slideshows[j].offsetHeight + 30
-        let totalHeight = height + 60
+        // Fix carousel height inside text labels.        
+        let totalHeight = height + 100
+        console.log("carousel " + j + " height set to " + totalHeight)
         totalHeightPx = totalHeight + "px"                
         slideshows[j].parentElement.style.height = totalHeightPx 
 
     }
 }
+
+adjustCarouselDimensions()
 
 if (typeof slickResizeObserver === 'undefined') {
 
