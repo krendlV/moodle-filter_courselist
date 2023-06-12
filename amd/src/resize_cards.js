@@ -27,7 +27,7 @@ define(['resize_cards'], function() {
         if (cards) {                    
             heightPx = height + 'px'        
             for (var i = 0; i < cards.length; i++) {  
-                cards[i].style.height = heightPx;                
+                cards[i].style.minHeight = heightPx;                
             }
         }
 
