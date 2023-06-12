@@ -154,7 +154,7 @@ class filter_courselist extends moodle_text_filter {
      * @return string
      */
     protected function get_courses($text) {  
-        global $PAGE;
+        global $PAGE;        
         
         $output = "";        
         $fields = 'id,category,shortname,fullname,idnumber,startdate,enddate,visible,groupmode,summary';
