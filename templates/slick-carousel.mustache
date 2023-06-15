@@ -31,7 +31,7 @@
 </style>
 
 
-<div id="carousel-container-{{uniqid}}" class="slick-carousel-container hidden">
+<div id="carousel-container-{{uniqid}}" class="slick-carousel-container invisible">
     <div id="carousel-{{uniqid}}" class="slick-carousel responsive card-deck">
 
         {{#courses}}
@@ -94,7 +94,6 @@
     </div>
 </div>
 				
-{{#js}}    
-    require(['filter_courselist/resize_cards'], (module) => module.init(document.getElementById("carousel-{{uniqid}}")));
-    require(['filter_courselist/slick_carousel'], (module) => module.init("#carousel-{{uniqid}}"));    
+{{#js}}        
+    require(['filter_courselist/slick_carousel'], (module) => module.init("#carousel-{{uniqid}}"));        
 {{/js}}

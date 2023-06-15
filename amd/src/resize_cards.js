@@ -1,9 +1,8 @@
 define(['resize_cards'], function() {
 
-    var SlickResizer = function(slideshow) {                
+    var SlickResizer = function(slideshow) {                                
+        this.resize(slideshow)             
         this.show(slideshow)  
-        this.resize(slideshow)              
-                                   
     };
 
     SlickResizer.prototype.resize = function(slideshow) {        
@@ -23,12 +22,12 @@ define(['resize_cards'], function() {
                     labelFix.parentElement.classList.add('p-0')
                 }                
             }
-        } 
+        }         
         
         // Resize card height.
         if (cards) {          
             // Get max height.     
-            for (var i = 0; i < cards.length; i++) {                  
+            for (var i = 0; i < cards.length; i++) {                      
                 if (cards[i].offsetHeight > height) {                       
                     cards[i].style.minHeight = 0;                
                     height = cards[i].offsetHeight                    
@@ -39,8 +38,8 @@ define(['resize_cards'], function() {
             for (var i = 0; i < cards.length; i++) {  
                 cards[i].style.minHeight = heightPx;                
             }
-        }      
-
+        }    
+        
         // Fix carousel height inside text labels.        
         var totalHeight = height + 100            
         var totalHeightPx = totalHeight + "px"                
@@ -49,8 +48,8 @@ define(['resize_cards'], function() {
     }
 
     
-    SlickResizer.prototype.show = function(slideshow) {
-        slideshow.parentElement.classList.remove('hidden')        
+    SlickResizer.prototype.show = function(slideshow) {        
+        slideshow.parentElement.classList.remove('invisible')        
     };
     
     return {
