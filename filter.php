@@ -309,7 +309,13 @@ class filter_courselist extends moodle_text_filter {
         // Process courses.
         if ($courses) {
 
-            $courserenderer = $PAGE->get_renderer('core', 'course');
+            $courserenderer = $PAGE->get_renderer('core', 'course');     
+            
+            // Re-write file links in course summary.
+            foreach ($courses as $course) {                    
+                $context = context_course::instance($course->id);
+                $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary', null);
+            }
 
             // Render from alternative template.
             if (strpos($text, 'template=')) {
