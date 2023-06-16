@@ -81,7 +81,7 @@ define(['jquery', 'slick', 'slick_carousel'],
             }    
             
             // Fix carousel height inside text labels.        
-            var totalHeight = height + 35            
+            var totalHeight = height + 70            
             var totalHeightPx = totalHeight + "px"                
             carousel.parentElement.style.height = totalHeightPx   
 
