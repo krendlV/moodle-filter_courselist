@@ -34,21 +34,27 @@ You can specify an alternative mustache template using the paramter **template**
 
 This will use an alternative Mustache template instead of the built-in Moodlecourse cards. You can put your own templates into the /templates subfolder, or use the existing ones. 
 
+These templates can aggregate the courses using any existing field, if aggregation is used inside the template, the template name has to include *aggregated-by-[criteria]*, eg, 
+*linkedlist-aggregated-by-coursecategory*.
+
 ### Included templates
 
 - list: similar to the "list" view of the myoverview block
 - teaser: similar to list, but smaller, usable in sidebars
 - slick-carousel: a carousel using the awesome slick carousel - https://kenwheeler.github.io/slick/
-- simple-list: a simple html list of course links
-- simple-list-unlinked: a simple html list of course names
+- textlist-aggregated-by-coursecategory: a simple list aggregated by course category
+- linkedlist-aggregated-by-coursecategory: a simple list aggregated by course category, with the courses linked.
 
-In addition to the standard fields of the course DB item, you can use these values in mustache templates:
+### Special fields in templates.
 
-- {{ coursecategory }}
-- {{ courseimage }}
-- {{ courseprogress }}
-- {{ wwwroot }}
+In addition to the standard fields of the course DB item and any course custom fields, you can use these values in mustache templates:
+
+- {{ categories }} - additional classes to be added for every course category (to support theme_tm_moove's custom category colors)
+- {{ coursecategory }} - the name of the course category
+- {{ courseimage }} - the url for the course image
+- {{ courseprogress }} - the % of course progress
+- {{ wwwroot }} - the site's wwwroot
 
 ## Usage example with all possible parameters
 
-{{ courselist title="featured courses" search enrolled=true categoryids=[1,2] courseids=[3,4] sort=startdate reverse filters=[startdate<NOW,mycustomfield=1] number=23 showall noresults="no courses found" template=list }}
+{{ courselist title="featured courses" search enrolled=true categoryids=[1,2] courseids=[3,4] sort=startdate reverse filters=[startdate<NOW,mycustomfield=1] number=23 showall noresults="no courses found" template=list nest=coursecategory }}

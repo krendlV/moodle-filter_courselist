@@ -1,0 +1,13 @@
+<ul>    
+    {{#coursecategory}}
+        <li>{{ coursecategory }}</li>
+            <ul>
+                {{#courses}}
+                <li>
+                    <a href="{{wwwroot}}/course/view.php?id={{id}}">{{ fullname }}</a>
+                </li>
+                {{/courses}}
+            </ul>
+        </li>
+    {{/coursecategory}}
+</ul>

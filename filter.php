@@ -78,7 +78,7 @@ class filter_courselist extends moodle_text_filter {
                     $atoms[0] = $this->get_courses($atoms[0]);
                     $parts[$key] = implode($atoms);
                 } else {
-                    return $this->return_error($text);
+                    return $this->return_error(get_string('errormsg', 'filter_courselist'), $text);
                 }
             }     
         }    
@@ -327,8 +327,9 @@ class filter_courselist extends moodle_text_filter {
                 $alttemplate = explode(' ', $alttemplate)[0];   
 
                 // Write courses using alternative Mustache template.                                       
-                foreach ($courses as $course) {                    
+                foreach ($courses as $course) {                             
 
+                    // Add/format additional fields.
                     if ($image = \cache::make('core', 'course_image')->get($course->id)) {
                         $course->courseimage = $image;
                     } else {
@@ -340,13 +341,58 @@ class filter_courselist extends moodle_text_filter {
                         $course->courseprogress = round($progress, 0);
                     } 
                     $course->startdate = userdate($course->startdate);
-                    $course->enddate = userdate($course->enddate);                        
+                    $course->enddate = userdate($course->enddate);          
+                    
+                    // Write all categories into classes to be compatible with theme_tm_moove custom course category colors.                            
+                    $category_id = $course->category;
+                    $category = $DB->get_record('course_categories',array('id'=>$category_id));                    
+                    $category_ids = array();
+                    while ($category_id !== "0") {  
+                        $category_ids[] = $category_id;
+                        $category_id = $category->parent;
+                        $category = $DB->get_record('course_categories',array('id'=>$category_id));  
+                    }                                        
+                    $course->categories = '';
+                    foreach ($category_ids as $category_id) {
+                        $course->categories .= ' category-' . $category_id;
+                    } 
 
                     // Convert to array for template export.
-                    $data['courses'][] = json_decode(json_encode ( $course ) , true);
-                }     
+                    $course = json_decode(json_encode ( $course ) , true);
+
+                    // Aggregate by different criteria if needed.
+                    if (strpos($alttemplate, 'aggregated-by-')) {
+                        $aggregate_by = explode('aggregated-by-', $alttemplate)[1];
+                        $aggregate_by = explode('-', $aggregate_by)[0];                                 
+                        if (array_key_exists($aggregate_by, $course)) {
+                            $aggregation_value = $course[$aggregate_by];
+                            $aggregated_data[$aggregate_by][$aggregation_value][$aggregate_by] = $aggregation_value;
+                            $aggregated_data[$aggregate_by][$aggregation_value]['courses'][] = $course; 
+                        } else {
+                            $output = $this->return_error(get_string('errorproperty', 'filter_courselist') . $aggregate_by, $text);
+                        }
+                    } else {
+                        $data['courses'][] = $course;
+                    }
+                }   
+
+                // Post-process aggregated data for export to template.
+                if (isset($aggregated_data)) {
+                    foreach ($aggregated_data[$aggregate_by] as $aggregation_value => $aggregated_courses)  {                                   
+                        $data[$aggregate_by][] = array($aggregate_by => $aggregation_value, 'courses' => $aggregated_courses['courses']);
+                    }
+                }
+
+                // Global variables.
                 $data['wwwroot'] = $CFG->wwwroot;
-                $output .= $OUTPUT->render_from_template('filter_courselist/' . $alttemplate, $data);   
+
+                // Check if template exists.
+                $template_file_path = $CFG->dirroot . "/filter/courselist/templates/$alttemplate" . '.mustache';
+                if (file_exists($template_file_path)) {                                    
+                    $output .= $OUTPUT->render_from_template('filter_courselist/' . $alttemplate, $data);   
+                } else {
+                    $output = $this->return_error(get_string('errortemplate', 'filter_courselist') . $template_file_path, $text);
+                }
             
             // Render coursecards.                            
             } else {                
@@ -415,11 +461,11 @@ class filter_courselist extends moodle_text_filter {
     /**
      * Returns original text plus error message.
      * 
-     * @param string $text 
+     * @param string $errormessage
+     * @param string $text
      * @return string
      */
-    protected function return_error($text) {
-        $errormsg = get_string('errormsg', 'filter_courselist');
+    protected function return_error($errormsg, $text) {        
         return '<div class="alert alert-danger">' . $errormsg . '</div>' . $text;
     }
      
