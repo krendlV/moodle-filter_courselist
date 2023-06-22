@@ -15,6 +15,7 @@ Add ''{{ courselist'' to your text, followed by filter parameters. All parameter
 - title: a title to put as a h3 over the coursecards. if no results are returned, no title will be shown.
 - search: will include a searchbox at the top of the coursecards grid, that searches for text inside the course's shortname, fullname and summary. if more than one coursecard grids exist on this page, the search will be applied to all of them, so it does not make sense to include searchboxes in more than one coursegrid.
 - enrolled: if set to true,  only lists courses the user is enrolled in, if set to false, only lists courses the user is not enrolled in - *eg: enrolled=true*
+- showhidden: show hidden courses even if the user cannot access them (only works without "enrolled=true")
 - courseids: comma-separated list inside square brackets - only lists courses with this ID - *eg: courseid=[2,4]*
 - categoryids: only lists courses from this category. You can specify multiple categories inside square brackets, separated by a comma.
 - sort: sort by course field. valid fields are: id, category, shortname, fullname, idnumber, startdate, enddate, visible, groupmode' - *eg: sort=startdate*. If no sort is given and courseids is used, courses will be returned in the order specified in courseids.
