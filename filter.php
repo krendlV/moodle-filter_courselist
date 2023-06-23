@@ -75,16 +75,20 @@ class filter_courselist extends moodle_text_filter {
                 
                 // Check filter integrity.
                 if (count($atoms) == 2) {                    
+
+                    // Replace filter code with filter content.
                     $atoms[0] = $this->get_courses($atoms[0]);
                     $parts[$key] = implode($atoms);
+
+                // Show error.
                 } else {
                     return $this->return_error(get_string('errormsg', 'filter_courselist'), $text);
                 }
             }     
         }    
 
-        return implode($parts);
-        
+        // Reassemble parts.
+        return implode($parts);        
     }
 
 
@@ -157,6 +161,27 @@ class filter_courselist extends moodle_text_filter {
     }
 
 
+        /**
+     * Returns a list of courses according to filter params.
+     * 
+     * @param array $categoryids 
+     * @return array
+     */
+    protected function add_subcategories($categoryids) {            
+        
+        global $DB;
+
+        // Get subcategories.
+        foreach ($categoryids as $categoryid) {            
+            $category = core_course_category::get($categoryid);
+            $subcategories = $category->get_all_children_ids();
+            $categoryids = array_merge($subcategories, $categoryids);
+        }  
+        
+        return $categoryids;
+    }
+
+
     /**
      * Returns a list of courses according to filter params.
      * 
@@ -202,6 +227,11 @@ class filter_courselist extends moodle_text_filter {
             $categoryids = explode(',', $categoryids);            
         } else {
             $categoryids = array();
+        }
+
+        // Filter param "subcategories": add subcategories.
+        if (strpos($text, 'subcategories')) {   
+            $categoryids = $this->add_subcategories($categoryids);
         }
 
         // Filter param "showhidden": Show hidden courses.

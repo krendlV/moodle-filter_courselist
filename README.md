@@ -18,6 +18,7 @@ Add ''{{ courselist'' to your text, followed by filter parameters. All parameter
 - showhidden: show hidden courses even if the user cannot access them (only works without "enrolled=true")
 - courseids: comma-separated list inside square brackets - only lists courses with this ID - *eg: courseid=[2,4]*
 - categoryids: only lists courses from this category. You can specify multiple categories inside square brackets, separated by a comma.
+- subcategories: will also list courses from subcategories of the specified categoryids
 - sort: sort by course field. valid fields are: id, category, shortname, fullname, idnumber, startdate, enddate, visible, groupmode' - *eg: sort=startdate*. If no sort is given and courseids is used, courses will be returned in the order specified in courseids.
 - reverse: reverses the sort order - *eg: reverse*
 - filters: comma-separated list inside square brackets - additional filters for any course fields (including custom course fields). supports multiple operators (<, >, =) and the php keyword *NOW* for the current timestamp - *eg: filters=[startdate<NOW,mycustomfield=1]*. < and > will be accepted as &gt; and &lt;.
@@ -58,4 +59,4 @@ In addition to the standard fields of the course DB item and any course custom f
 
 ## Usage example with all possible parameters
 
-{{ courselist title="featured courses" search enrolled=true categoryids=[1,2] courseids=[3,4] sort=startdate reverse filters=[startdate<NOW,mycustomfield=1] number=23 showall noresults="no courses found" template=list nest=coursecategory }}
+{{ courselist title="featured courses" search enrolled=true categoryids=[1,2] subcategories showhidden courseids=[3,4] sort=startdate reverse filters=[startdate<NOW,mycustomfield=1] number=23 showall noresults="no courses found" template=list nest=coursecategory }}
