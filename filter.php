@@ -98,27 +98,17 @@ class filter_courselist extends moodle_text_filter {
      * @param array $courseids
      * @param array $categoryids
      * @param string $fields
-     * @param string $sort
-     * @param bool $showhidden
+     * @param string $sort     
      * @return array $courses
      * 
      */
-    protected function get_all_courses($courseids, $categoryids, $fields, $sort, $showhidden = false) {
+    protected function get_all_courses($courseids, $categoryids, $fields, $sort) {
 
         global $DB;
         
         // Get by courseid.
         if ($courseids) {            
-            $courses = $DB->get_records_list('course', 'id', $courseids, $sort, $fields);
-
-            // Filter out hidden courses.
-            if (!$showhidden) {
-                foreach ($courses as $key => $course) {
-                    if (!$course->visible) {
-                        unset($courses[$key]);
-                    }
-                }
-            }
+            $courses = $DB->get_records_list('course', 'id', $courseids, $sort, $fields);            
 
             // Filter by category IDs afterwards if necessary.
             if ($categoryids) {
@@ -255,14 +245,23 @@ class filter_courselist extends moodle_text_filter {
             }
         } else if (strpos($text, 'enrolled=false')) {                 
             $enrolled_courses = enrol_get_my_courses();
-            $courses = $this->get_all_courses($courseids, $categoryids, $fields, $sort, $showhidden);
+            $courses = $this->get_all_courses($courseids, $categoryids, $fields, $sort);
             foreach ($courses as $key => $value) {
                 if (in_array($key, array_keys($enrolled_courses))) {
                     unset($courses[$key]);
                 }
             }
         } else {
-            $courses = $this->get_all_courses($courseids, $categoryids, $fields, $sort, $showhidden);
+            $courses = $this->get_all_courses($courseids, $categoryids, $fields, $sort);
+        }
+
+        // Filter out hidden courses.                    
+        if (!$showhidden) {
+            foreach ($courses as $key => $course) {
+                if (!$course->visible) {
+                    unset($courses[$key]);
+                }
+            }
         }
 
         // Add customfields to courses.        
