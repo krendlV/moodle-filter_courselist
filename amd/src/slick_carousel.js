@@ -88,11 +88,15 @@ define(['jquery', 'slick', 'slick_carousel'],
 
             // Add total number of items to dots.
             var dots = carousel.getElementsByClassName("slick-dots")[0]
-            var totalItems =  dots.getElementsByTagName("li").length
-            var totalElement = document.createElement("li")
-            totalElement.innerHTML = totalItems
-            totalElement.classList.add("dots-total")
-            dots.appendChild(totalElement)
+            if (dots) {
+                if (dots.getElementsByTagName("li")) {
+                    var totalItems =  dots.getElementsByTagName("li").length
+                    var totalElement = document.createElement("li")
+                    totalElement.innerHTML = totalItems
+                    totalElement.classList.add("dots-total")
+                    dots.appendChild(totalElement)
+                }
+            }
 
             // Show finished slideshow.    
             carousel.parentElement.classList.remove('invisible')                               
