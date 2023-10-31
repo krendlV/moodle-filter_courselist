@@ -179,7 +179,7 @@ class filter_courselist extends moodle_text_filter {
      * @return string
      */
     protected function get_courses($text) {  
-        global $PAGE;        
+        global $CFG, $PAGE, $USER;        
         
         $output = "";        
         $fields = 'id,category,shortname,fullname,idnumber,startdate,enddate,visible,groupmode,summary';
@@ -316,6 +316,34 @@ class filter_courselist extends moodle_text_filter {
                     }
                 }                
             }            
+        }
+
+        // Filter param "cohortfield": check for course custom fields named like a cohort.
+        if (strpos($text, 'cohortfield')) {   
+            require_once($CFG->dirroot.'/cohort/lib.php');
+            $cohorts = cohort_get_user_cohorts($USER->id);
+
+            // Get cohort ids.
+            foreach ($cohorts as $cohort) {
+                $cohortids[] = $cohort->idnumber;
+            }
+
+            // Check courses for matching course profile fields.
+            foreach ($courses as $key => $course) {
+                $keepcourse = false;
+                foreach ($cohortids as $property) {
+                    if (property_exists($course, $property)) {
+                        if ($course->$property == 1) {
+                            $keepcourse = true;
+                        }
+                    }
+                }
+
+                // Throw away courses that did not have a matching field.
+                if (!$keepcourse) {
+                    unset($courses[$key]);
+                }                                
+            }
         }
 
         // Filter for searchbox entry.

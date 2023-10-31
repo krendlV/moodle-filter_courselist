@@ -12,19 +12,27 @@ Add ''{{ courselist'' to your text, followed by filter parameters. All parameter
 
 ### Parameters
 
+#### Basic features
 - title: a title to put as a h3 over the coursecards. if no results are returned, no title will be shown.
 - search: will include a searchbox at the top of the coursecards grid, that searches for text inside the course's shortname, fullname and summary. if more than one coursecard grids exist on this page, the search will be applied to all of them, so it does not make sense to include searchboxes in more than one coursegrid.
+- number: maximum number of courses to display.
+- showall: includes a show all button at the bottom of the coursecards grid.
+- noresults: text to show when there are no results
+
+#### Course properties
 - enrolled: if set to true,  only lists courses the user is enrolled in, if set to false, only lists courses the user is not enrolled in - *eg: enrolled=true*
 - showhidden: show hidden courses even if the user cannot access them (only works without "enrolled=true")
 - courseids: comma-separated list inside square brackets - only lists courses with this ID - *eg: courseid=[2,4]*
 - categoryids: only lists courses from this category. You can specify multiple categories inside square brackets, separated by a comma.
 - subcategories: will also list courses from subcategories of the specified categoryids
+
+#### Sorting
 - sort: sort by course field. valid fields are: id, category, shortname, fullname, idnumber, startdate, enddate, visible, groupmode' - *eg: sort=startdate*. If no sort is given and courseids is used, courses will be returned in the order specified in courseids.
 - reverse: reverses the sort order - *eg: reverse*
+
+#### Filtering
 - filters: comma-separated list inside square brackets - additional filters for any course fields (including custom course fields). supports multiple operators (<, >, =) and the php keyword *NOW* for the current timestamp - *eg: filters=[startdate<NOW,mycustomfield=1]*. < and > will be accepted as &gt; and &lt;.
-- number: maximum number of courses to display.
-- showall: includes a show all button at the bottom of the coursecards grid.
-- noresults: text to show when there are no results
+- cohortfield: only shows courses that have a field with the same name as a cohort the user is enrolled in, and the value 1. This allows you to make custom course field checkboxes named after cohorts, and control which cohorts the courses are displayed to.
 
 ### A note on including custom course fields
 
