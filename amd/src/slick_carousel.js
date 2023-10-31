@@ -5,6 +5,7 @@ define(['jquery', 'slick', 'slick_carousel'],
             console.log("Initializing slick carousel")       
             $(carouselId).slick({
                 dots: true,
+                dotsClass: 'slick-dots',
                 infinite: true,
                 speed: 300,
                 slidesToShow: 5,
@@ -84,6 +85,14 @@ define(['jquery', 'slick', 'slick_carousel'],
             var totalHeight = height + 70            
             var totalHeightPx = totalHeight + "px"                
             carousel.parentElement.style.height = totalHeightPx   
+
+            // Add total number of items to dots.
+            var dots = carousel.getElementsByClassName("slick-dots")[0]
+            var totalItems =  dots.getElementsByTagName("li").length
+            var totalElement = document.createElement("li")
+            totalElement.innerHTML = totalItems
+            totalElement.classList.add("dots-total")
+            dots.appendChild(totalElement)
 
             // Show finished slideshow.    
             carousel.parentElement.classList.remove('invisible')                               

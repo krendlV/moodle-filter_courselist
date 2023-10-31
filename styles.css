@@ -2,3 +2,33 @@
 .pagelayout-frontpage .dashboard-card.w-100, .pagelayout-coursecategory .dashboard-card.w100 {
   width: 100% !important;
 }
+
+/* pagination numbers instead of dots on mobile #8 */
+.slick-carousel .dots-total {
+  display: none;
+}
+.slick-carousel .dots-total:before {
+  content: " / ";
+}
+@media (max-width: 768px) {
+  .slick-carousel .slick-dots .dots-total, .slick-carousel .slick-dots .slick-active {
+    display: inline-block;    
+    width: unset;
+    margin-right: 1px;
+  }
+  .slick-carousel ul.slick-dots > li {
+    display: none;
+  }
+  .slick-dots li.slick-active button:before {
+    content: unset;
+  }
+  .slick-dots li.slick-active button, .slick-carousel .dots-total {
+    font-size: unset;
+    line-height: unset;
+    color: unset;
+    padding: 0;
+    width: unset;
+    text-align: right;    
+  }
+}
+
