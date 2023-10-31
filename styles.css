@@ -8,7 +8,7 @@
   display: none;
 }
 .slick-carousel .dots-total:before {
-  content: "/ ";
+  content: " / ";
 }
 @media (max-width: 768px) {
   .slick-carousel .slick-dots .dots-total, .slick-carousel .slick-dots .slick-active {
@@ -29,6 +29,7 @@
     padding: 0;
     width: unset;
     text-align: right;    
+    margin: 0;
   }
 }
 
