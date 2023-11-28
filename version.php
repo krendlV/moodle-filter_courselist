@@ -17,7 +17,7 @@
 /**
  * Version details
  *
- * @package    filter_courselist 
+ * @package    filter_courselist
  * @copyright  2023 think-modular
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,6 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->component = 'filter_courselist';
 $plugin->requires  = 2021040100;
 
-$plugin->version   = 2023100301;
-$plugin->release = 'v1.6.1';
+$plugin->version   = 2023112801;
+$plugin->release = 'v1.6.2';
 $plugin->maturity = MATURITY_STABLE;

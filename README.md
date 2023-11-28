@@ -2,7 +2,7 @@
 
 ## Installation
 
-Install like any other filter plugin - put into your /filter subfolder and enable in site filter settings. 
+Install like any other filter plugin - put into your /filter subfolder and enable in site filter settings.
 
 Note: if you want to use this plugin inside of blocks, you have to turn it ON for the whole site, since you cannot selectively turn on specific filters for blocks.
 
@@ -30,16 +30,18 @@ Add ''{{ courselist'' to your text, followed by filter parameters. All parameter
 
 ### Filtering
 - **filters**: comma-separated list inside square brackets - additional filters for any course fields (including custom course fields). supports multiple operators (<, >, =) and the php keyword *NOW* for the current timestamp - *eg: filters=[startdate<NOW,mycustomfield=1]*. < and > will be accepted as &gt; and &lt;.
-- **cohortfield**: only shows courses that have a field with the same name as a cohort the user is enrolled in, and the value 1. This allows you to make custom course field checkboxes named after cohorts, and control which cohorts the courses are displayed to.
+- **cohortfield**: only shows courses that have a field with the same name as a cohort the user is enrolled in, and the specified value - *eg: cohortfields=1*
+
+This allows you to make custom course field checkboxes named after cohorts, and control which cohorts the courses are displayed to.
 
 When including custom course fields, be aware of how the values are saved, in order for filters to work. For example, the value of a dropdown menu is not the text of the selected option, but its index.
 
 ### Templates
 - **template**: alternative mustache template to use instead of of the built-in Moodlecourse cards - *eg: template=list*.
 
-You can put your own templates into the /templates subfolder, or use the existing ones. 
+You can put your own templates into the /templates subfolder, or use the existing ones.
 
-Templates can aggregate the courses using any existing field, if aggregation is used inside the template, the template name has to include *aggregated-by-[criteria]*, eg, 
+Templates can aggregate the courses using any existing field, if aggregation is used inside the template, the template name has to include *aggregated-by-[criteria]*, eg,
 *linkedlist-aggregated-by-coursecategory*.
 
 #### Included templates
