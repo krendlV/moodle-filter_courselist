@@ -32,8 +32,6 @@ Add ''{{ courselist'' to your text, followed by filter parameters. All parameter
 - **filters**: comma-separated list inside square brackets - additional filters for any course fields (including custom course fields). supports multiple operators (<, >, =) and the php keyword *NOW* for the current timestamp - *eg: filters=[startdate<NOW,mycustomfield=1]*. < and > will be accepted as &gt; and &lt;.
 - **cohortfield**: only shows courses that have a field with the same name as a cohort the user is enrolled in, and the specified value - *eg: cohortfields=1* or *cohortfields>2*
 
-- **filters via GET parameters**: all of the above filters can also be applied via GET parameters in the URL - *eg: your-moodle-site.com?courselist_filter_startdate="<NOW"&courselist_filter_mycustomfield=1&cohortfields=">2"*
-
 This allows you to make custom course field checkboxes named after cohorts, and control which cohorts the courses are displayed to.
 
 When including custom course fields, be aware of how the values are saved, in order for filters to work. For example, the value of a dropdown menu is not the text of the selected option, but its index (starting at 1, not at 0!).
@@ -62,5 +60,16 @@ In addition to the standard fields of the course DB item and any course custom f
 - {{ courseprogress }} - the % of course progress
 - {{ wwwroot }} - the site's wwwroot
 
-### Usage example with all possible parameters
-{{ courselist title="featured courses" search enrolled=true categoryids=[1,2] subcategories showhidden courseids=[3,4] sort=startdate reverse filters=[startdate<NOW,mycustomfield=1] cohortfield number=23 showall noresults="no courses found" template=list nest=coursecategory }}
+### Options via GET parameters
+- **useget**: enables all of the above options to also be applied via GET parameters in the URL. GET parameters will overrule parameters set in the filter - *eg: https://your-moodle-site.com?courselist_filter_startdate="<NOW"&courselist_filter_mycustomfield="=1"&courselist_cohortfields=">2"&courselist_sort=startdate&courselist_number=23&courseids=3,6,23* etc.
+
+**Be aware, that courselist_filter and cohortfield values need to include the operator in the value!** So always use *courselist_filter_mycustomfield="=1"*, and not *courselist_filter_mycustomfield=1*.
+
+### Multi-field text search via GET parameter
+- **courselist_search**: searches for the given text fragment in course shortname, fullname, and summary - *eg: https://your-moodle-site.com?courselist_search="asdf"*.
+
+This enables you, for example, to build your own customized search interface. Be aware, that users can enter GET parameters themselves, to potentially see courses that they should not see.
+
+### Usage example of text filter with all possible parameters
+{{ courselist useget title="featured courses" search enrolled=true categoryids=[1,2] subcategories showhidden courseids=[3,4] sort=startdate reverse filters=[startdate<NOW,mycustomfield=1] cohortfield>2 number=23 showall noresults="no courses found" template=list nest=coursecategory }}
+

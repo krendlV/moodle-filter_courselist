@@ -181,17 +181,39 @@ class filter_courselist extends moodle_text_filter {
     protected function get_courses($text) {
         global $CFG, $PAGE, $USER;
 
+        // Initialize output.
         $output = "";
+
+        // Define valid course fields - there is probably a more elegant way to do this.
         $fields = 'id,category,shortname,fullname,idnumber,startdate,enddate,visible,groupmode,summary';
         $valid_fields = explode(',', $fields);
 
+        // Get GET parameters for filters.
+        $GET_options = array();
+        $GET_filters = array();
+        if (strpos($text, 'useget')) {
+            foreach ($_GET as $key => $value) {
+                if (substr($key, 0, 11) == 'courselist_') {
+                    $param = explode('_', $key);
+                    if (count($param) == 2) {
+                        $GET_options[$param[1]] = $value;
+                    } elseif (count($param) == 3 && $param[1] == "filter") {
+                        $value = str_replace(array('\'', '"'), '', $value);
+                        $GET_filters[$param[2]] = $value;
+                    }
+                }
+            }
+        }
+
         // Filter param "search": Include search form.
-        if (strpos($text, 'search')) {
+        if (strpos($text, 'search') || array_key_exists('search', $GET_options)) {
             $output = $this->searchbox();
         }
 
         // Filter param "sort": Get sort criteria.
-        if (strpos($text, 'sort=')) {
+        if (array_key_exists('sort', $GET_options)) {
+            $sort = $GET_options['sort'];
+        } elseif (strpos($text, 'sort=')) {
             $sort = explode('sort=', $text)[1];
             $sort = explode(' ', $sort)[0];
         } else {
@@ -202,7 +224,9 @@ class filter_courselist extends moodle_text_filter {
         }
 
         // Filter param "courseids": Get courseids.
-        if (strpos($text, 'courseids=[')) {
+        if (array_key_exists('courseids', $GET_options)) {
+            $courseids = explode(',', $GET_options['courseids']);
+        } elseif (strpos($text, 'courseids=[')) {
             $courseids = explode('courseids=[', $text)[1];
             $courseids = explode(']', $courseids)[0];
             $courseids = explode(',', $courseids);
@@ -211,7 +235,9 @@ class filter_courselist extends moodle_text_filter {
         }
 
         // Filter param "categoryids": Only courses from selected categories.
-        if (strpos($text, 'categoryids=[')) {
+        if (array_key_exists('categoryids', $GET_options)) {
+            $categoryids = explode(',', $GET_options['categoryids']);
+        } elseif (strpos($text, 'categoryids=[')) {
             $categoryids = explode('categoryids=[', $text)[1];
             $categoryids = explode(']', $categoryids)[0];
             $categoryids = explode(',', $categoryids);
@@ -220,19 +246,25 @@ class filter_courselist extends moodle_text_filter {
         }
 
         // Filter param "subcategories": add subcategories.
-        if (strpos($text, 'subcategories')) {
+        if (strpos($text, 'subcategories') || array_key_exists('subcategories', $GET_options)) {
             $categoryids = $this->add_subcategories($categoryids);
         }
 
         // Filter param "showhidden": Show hidden courses.
-        if (strpos($text, 'showhidden')) {
+        if (strpos($text, 'showhidden') || array_key_exists('showhidden', $GET_options)) {
             $showhidden = true;
         } else {
             $showhidden = false;
         }
 
         // Filter param "enrolled": Get all courses, or only enrolled / not enrolled.
-        if (strpos($text, 'enrolled=true')) {
+        if (array_key_exists('enrolled', $GET_options)) {
+            $enrolled = $GET_options['enrolled'];
+        } else {
+            $enrolled = 0;
+        }
+
+        if (strpos($text, 'enrolled=true') || $enrolled == "true") {
             $courses = enrol_get_my_courses($fields, $sort, 0, $courseids);
 
             // Filter by category IDs afterwards if necessary.
@@ -243,7 +275,7 @@ class filter_courselist extends moodle_text_filter {
                     }
                 }
             }
-        } else if (strpos($text, 'enrolled=false')) {
+        } else if (strpos($text, 'enrolled=false') || $enrolled == "false") {
             $enrolled_courses = enrol_get_my_courses();
             $courses = $this->get_all_courses($courseids, $categoryids, $fields, $sort);
             foreach ($courses as $key => $value) {
@@ -256,7 +288,7 @@ class filter_courselist extends moodle_text_filter {
         }
 
         // Filter out hidden courses.
-        if (!$showhidden) {
+        if (!$showhidden && !array_key_exists('showhidden', $GET_options)) {
             foreach ($courses as $key => $course) {
                 if (!$course->visible) {
                     unset($courses[$key]);
@@ -277,16 +309,28 @@ class filter_courselist extends moodle_text_filter {
         }
 
         // Filter param "filter": custom filters.
-        if (strpos($text, 'filters=[')) {
-            $filters = explode('filters=[', $text)[1];
-            $filters = explode(']', $filters)[0];
-            $filters = explode(',', $filters);
-            foreach ($filters as $filter) {
+        if (strpos($text, 'filters=[') || count($GET_filters) > 0) {
+
+            $filters = array();
+            if (strpos($text, 'filters=[')) {
+                $filterstrings = explode('filters=[', $text)[1];
+                $filterstrings = explode(']', $filterstrings)[0];
+                $filterstrings = explode(',', $filterstrings);
+            }
+            foreach ($filterstrings as $filterstring) {
+                $parts = preg_split('/([><=]|&lt;|&gt;)/', $filterstring, -1, PREG_SPLIT_DELIM_CAPTURE);
+                $property = trim($parts[0]);
+                $operator = trim($parts[1]);
+                $value = trim($parts[2]);
+                $filters[$property] = $operator . $value;
+            }
+            $filters = array_merge($filters, $GET_filters);
+
+            foreach ($filters as $property => $filter) {
 
                 // Parse filter into property, operator and value.
                 $filter = trim($filter);
                 $parts = preg_split('/([><=]|&lt;|&gt;)/', $filter, -1, PREG_SPLIT_DELIM_CAPTURE);
-                $property = trim($parts[0]);
                 $operator = trim($parts[1]);
                 $value = trim($parts[2]);
 
@@ -319,12 +363,17 @@ class filter_courselist extends moodle_text_filter {
         }
 
         // Filter param "cohortfield": check for course custom fields named like a cohort.
-        if (strpos($text, 'cohortfield')) {
+        if (strpos($text, 'cohortfield') || array_key_exists('cohortfield', $GET_options)) {
             require_once($CFG->dirroot.'/cohort/lib.php');
 
             // Get filter value.
-            $value = explode('cohortfield', $text)[1];
-            $value = explode(' ', $value)[0];
+            if (array_key_exists('cohortfield', $GET_options)) {
+                $value = $GET_options['cohortfield'];
+            } else {
+                $value = explode('cohortfield', $text)[1];
+                $value = explode(' ', $value)[0];
+            }
+
             // Parse filter into operator and value.
             $parts = preg_split('/([><=]|&lt;|&gt;)/', $value, -1, PREG_SPLIT_DELIM_CAPTURE);
             $operator = trim($parts[1]);
@@ -369,8 +418,8 @@ class filter_courselist extends moodle_text_filter {
         // Filter for searchbox entry.
         if (array_key_exists('courselist_search', $_GET)) {
             if ($searchterm = $_GET['courselist_search']) {
+                $searchterm = str_replace(array('\'', '"'), '', $searchterm);
                 $search_properties = ['shortname', 'fullname', 'summary'];
-
                 foreach ($courses as $key => $course) {
                     $found = false;
                     foreach ($search_properties as $property) {
@@ -386,17 +435,32 @@ class filter_courselist extends moodle_text_filter {
         }
 
         // Filter param "reverse": reverses sort order.
-        if (strpos($text, 'reverse')) {
+        if (strpos($text, 'reverse') || array_key_exists('reverse', $GET_options)) {
             $courses = array_reverse($courses, true);
         }
 
         // Filter param "number": limit number of displayed courses.
-        if (!array_key_exists('courselist_showall', $_GET) && (strpos($text, 'number='))) {
-            $number = explode('number=', $text)[1];
-            $number = intval(explode(' ', $number)[0]);
-            if (count($courses) > $number) {
-                $courses = array_slice($courses, 0, $number);
-                $showallbutton = true;
+        if (!array_key_exists('courselist_showall', $_GET)) {
+            if (strpos($text, 'number=') || array_key_exists('number', $GET_options)) {
+
+                // Get number of courses.
+                if (array_key_exists('number', $GET_options)) {
+                    $number = $GET_options['number'];
+                } else {
+                    $number = explode('number=', $text)[1];
+                    $number = intval(explode(' ', $number)[0]);
+                }
+
+                // Limit course number.
+                if (count($courses) > $number) {
+                    $courses = array_slice($courses, 0, $number);
+                    $showallbutton = true;
+                }
+
+                $showallneeded = true;
+
+            } else {
+                $showallneeded = false;
             }
         }
 
@@ -412,13 +476,17 @@ class filter_courselist extends moodle_text_filter {
             }
 
             // Render from alternative template.
-            if (strpos($text, 'template=')) {
+            if (strpos($text, 'template=') || array_key_exists('template', $GET_options)) {
 
                 global $CFG, $DB, $OUTPUT, $USER;
 
                 // Get name of alttemplate.
-                $alttemplate = explode('template=', $text)[1];
-                $alttemplate = explode(' ', $alttemplate)[0];
+                if (array_key_exists('template', $GET_options)) {
+                    $alttemplate = $GET_options['template'];
+                } else {
+                    $alttemplate = explode('template=', $text)[1];
+                    $alttemplate = explode(' ', $alttemplate)[0];
+                }
 
                 // Write courses using alternative Mustache template.
                 foreach ($courses as $course) {
@@ -510,28 +578,32 @@ class filter_courselist extends moodle_text_filter {
 
         // Filter param "noresults": include noresults message.
         } else {
-            if (strpos($text, 'noresults=')) {
-                $noresults = explode('noresults=', $text)[1];
-                $noresults = explode('"', $noresults)[1];
+            if (strpos($text, 'noresults=') || array_key_exists('noresults', $GET_options)) {
 
-                // Activate other filters.
-                $noresults = str_replace('[[', '{{', $noresults);
-                $noresults = str_replace(']]', '}}', $noresults);
-
+                // Get value
+                if (array_key_exists('noresults', $GET_options)) {
+                    $noresults = $GET_options['noresults'];
+                } else {
+                    $noresults = explode('noresults=', $text)[1];
+                    $noresults = explode('"', $noresults)[1];
+                }
                 $output .= $noresults;
             }
         }
 
         // Filter param "showall": display button to show all courses.
-        if (!array_key_exists('courselist_showall', $_GET) && strpos($text, 'showall')
-                && $showallbutton) {
-            $url = "$_SERVER[REQUEST_URI]";
-            $url .= (count($_GET) > 0 ? '&' : '?');
-            $url .= 'courselist_showall=1';
-            $output .= '<a class="btn btn-primary" href="' . $url . '">'
-                . get_string('showall', 'filter_courselist') . '</a>';
+        if ($showallneeded) {
+            if (!array_key_exists('courselist_showall', $_GET) && strpos($text, 'showall')
+                    && $showallbutton) {
+                $url = "$_SERVER[REQUEST_URI]";
+                $url .= (count($_GET) > 0 ? '&' : '?');
+                $url .= 'courselist_showall=1';
+                $output .= '<a class="btn btn-primary" href="' . $url . '">'
+                    . get_string('showall', 'filter_courselist') . '</a>';
+            }
         }
 
+        // All done! Return our output.
         return $output;
 
     }
