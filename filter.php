@@ -319,12 +319,16 @@ class filter_courselist extends moodle_text_filter {
         }
 
         // Filter param "cohortfield": check for course custom fields named like a cohort.
-        if (strpos($text, 'cohortfield=')) {
+        if (strpos($text, 'cohortfield')) {
             require_once($CFG->dirroot.'/cohort/lib.php');
 
             // Get filter value.
-            $value = explode('cohortfield=', $text)[1];
+            $value = explode('cohortfield', $text)[1];
             $value = explode(' ', $value)[0];
+            // Parse filter into operator and value.
+            $parts = preg_split('/([><=]|&lt;|&gt;)/', $value, -1, PREG_SPLIT_DELIM_CAPTURE);
+            $operator = trim($parts[1]);
+            $value = trim($parts[2]);
 
             // Get user cohorts.
             $cohorts = cohort_get_user_cohorts($USER->id);
@@ -339,8 +343,18 @@ class filter_courselist extends moodle_text_filter {
                 $keepcourse = false;
                 foreach ($cohortids as $property) {
                     if (property_exists($course, $property)) {
-                        if ($course->$property == $value) {
-                            $keepcourse = true;
+                        if ($operator == "=") {
+                            if ($course->$property == $value) {
+                                $keepcourse = true;
+                            }
+                        } else if ($operator == ">" || $operator == "&gt;") {
+                            if ($course->$property > $value) {
+                                $keepcourse = true;
+                            }
+                        } else if ($operator == "<" || $operator == "&lt;") {
+                            if ($course->$property < $value) {
+                                $keepcourse = true;
+                            }
                         }
                     }
                 }

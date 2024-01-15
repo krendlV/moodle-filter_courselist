@@ -28,5 +28,5 @@ $plugin->component = 'filter_courselist';
 $plugin->requires  = 2021040100;
 
 $plugin->version   = 2023112801;
-$plugin->release = 'v1.6.2';
+$plugin->release = 'v1.6.3';
 $plugin->maturity = MATURITY_STABLE;
