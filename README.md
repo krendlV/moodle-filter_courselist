@@ -32,6 +32,8 @@ Add ''{{ courselist'' to your text, followed by filter parameters. All parameter
 - **filters**: comma-separated list inside square brackets - additional filters for any course fields (including custom course fields). supports multiple operators (<, >, =) and the php keyword *NOW* for the current timestamp - *eg: filters=[startdate<NOW,mycustomfield=1]*. < and > will be accepted as &gt; and &lt;.
 - **cohortfield**: only shows courses that have a field with the same name as a cohort the user is enrolled in, and the specified value - *eg: cohortfields=1* or *cohortfields>2*
 
+- **filters via GET parameters**: all of the above filters can also be applied via GET parameters in the URL - *eg: your-moodle-site.com?courselist_filter_startdate="<NOW"&courselist_filter_mycustomfield=1&cohortfields=">2"*
+
 This allows you to make custom course field checkboxes named after cohorts, and control which cohorts the courses are displayed to.
 
 When including custom course fields, be aware of how the values are saved, in order for filters to work. For example, the value of a dropdown menu is not the text of the selected option, but its index (starting at 1, not at 0!).
