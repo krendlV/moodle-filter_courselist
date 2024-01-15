@@ -264,7 +264,7 @@ class filter_courselist extends moodle_text_filter {
             $enrolled = 0;
         }
 
-        if (strpos($text, 'enrolled=true') || $enrolled == "true") {
+        if (strpos($text, 'enrolled=true') || $enrolled === "true") {
             $courses = enrol_get_my_courses($fields, $sort, 0, $courseids);
 
             // Filter by category IDs afterwards if necessary.
@@ -275,7 +275,7 @@ class filter_courselist extends moodle_text_filter {
                     }
                 }
             }
-        } else if (strpos($text, 'enrolled=false') || $enrolled == "false") {
+        } else if (strpos($text, 'enrolled=false') || $enrolled === "false") {
             $enrolled_courses = enrol_get_my_courses();
             $courses = $this->get_all_courses($courseids, $categoryids, $fields, $sort);
             foreach ($courses as $key => $value) {
