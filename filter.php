@@ -193,20 +193,20 @@ class filter_courselist extends moodle_text_filter {
         $GET_filters = array();
         if (strpos($text, 'useget')) {
             foreach ($_GET as $key => $value) {
-                if (substr($key, 0, 11) == 'courselist_') {
-                    $param = explode('_', $key);
-                    if (count($param) == 2) {
-                        $GET_options[$param[1]] = $value;
-                    } elseif (count($param) == 3 && $param[1] == "filter") {
-                        $parts = preg_split('/([><=]|&lt;|&gt;)/', $value, -1, PREG_SPLIT_DELIM_CAPTURE);
-                        if (count($parts) == 3) {
-                            $operator = trim($parts[1]);
-                            $value = trim($parts[2]);
-                        } else {
-                            $operator = "=";
-                        }
-                        $GET_filters[$param[2]] = $operator . $value;
+                if (substr($key, 0, 18) == 'courselist_filter_') {
+                    $key = str_replace('courselist_filter_', '', $key);
+                    $parts = preg_split('/([><=]|&lt;|&gt;)/', $value, -1, PREG_SPLIT_DELIM_CAPTURE);
+                    if (count($parts) == 3) {
+                        $operator = trim($parts[1]);
+                        $value = trim($parts[2]);
+                    } else {
+                        $operator = "=";
                     }
+                    $GET_filters[$key] = $operator . $value;
+
+                } elseif (substr($key, 0, 11) == 'courselist_') {
+                    $key = str_replace('courselist_', '', $key);
+                    $GET_options[$key] = $value;
                 }
             }
         }
