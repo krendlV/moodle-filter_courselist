@@ -206,7 +206,7 @@ class filter_courselist extends moodle_text_filter {
         }
 
         // Filter param "search": Include search form.
-        if (strpos($text, 'search') || array_key_exists('search', $GET_options)) {
+        if (strpos($text, 'search')) {
             $output = $this->searchbox();
         }
 
