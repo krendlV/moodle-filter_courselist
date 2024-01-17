@@ -447,6 +447,7 @@ class filter_courselist extends moodle_text_filter {
 
         // Filter param "number": limit number of displayed courses.
         if (!array_key_exists('courselist_showall', $_GET)) {
+            $showallbutton = false;
             if (strpos($text, 'number=') || array_key_exists('number', $GET_options)) {
 
                 // Get number of courses.
@@ -458,7 +459,8 @@ class filter_courselist extends moodle_text_filter {
                 }
 
                 // Limit course number.
-                if (count($courses) > $number) {
+                $resultnumber = count($courses);
+                if ($resultnumber > $number) {
                     $courses = array_slice($courses, 0, $number);
                     $showallbutton = true;
                 }
@@ -467,6 +469,16 @@ class filter_courselist extends moodle_text_filter {
 
             } else {
                 $showallneeded = false;
+            }
+        }
+
+        // Option "resultsummary": show result summary.
+        if (strpos($text, 'resultsummary')) {
+            if ($showallbutton) {
+                $output .= '<span id="courselist-result-summary">' . get_string('resultcount_partial', 'filter_courselist', array('show' => $number, 'total' => $resultnumber)) . "</span>";
+
+            } else {
+                $output .= '<span id="courselist-result-summary">' . get_string('resultcount_full', 'filter_courselist', $resultnumber) . "</span>";;
             }
         }
 

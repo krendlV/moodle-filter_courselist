@@ -30,7 +30,7 @@ $string['errormsg'] = 'Malformed courselist filter found - ignoring all courseli
 $string['errorproperty'] = 'Invalid aggregation property: ';
 $string['errortemplate'] = 'Template not found: ';
 
-$string['showall'] = 'Show all courses';
-$string['resultcount_full'] = 'Showing {$a} courses.';
-$string['resultcount_partial'] = 'Showing {$a->show} of {$a->total} courses.';
+$string['showall'] = 'Zeige alle Kurse';
+$string['resultcount_full'] = 'Zeige {$a} Kurse.';
+$string['resultcount_partial'] = 'Zeige {$a->show} von {$a->total} Kursen.';
 

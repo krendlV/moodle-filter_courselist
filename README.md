@@ -16,6 +16,7 @@ Add ''{{ courselist'' to your text, followed by filter parameters. All parameter
 - **number**: maximum number of courses to display.
 - **showall**: includes a show all button at the bottom of the coursecards grid.
 - **noresults**: text to show when there are no results
+- **resultsummary**: show number of courses that fit the criteria (if *number* is used, it will show how many courses from how many total are currently displayed)
 
 ### Course properties
 - **enrolled**: if set to true,  only lists courses the user is enrolled in, if set to false, only lists courses the user is not enrolled in - *eg: enrolled=true*
