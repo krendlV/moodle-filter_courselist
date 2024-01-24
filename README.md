@@ -24,12 +24,15 @@ Add ''{{ courselist'' to your text, followed by filter parameters. All parameter
 - **courseids**: comma-separated list inside square brackets - only lists courses with this ID - *eg: courseid=[2,4]*
 - **categoryids**: only lists courses from this category. You can specify multiple categories inside square brackets, separated by a comma.
 - **subcategories**: will also list courses from subcategories of the specified categoryids
+- **progress**: will only show courses with a certain progress in course completion for this user - *eg: completion>50*
+
+If a completion higher than a certain value is specified, courses that do not have course completion activated will not be shown.
 
 ### Sorting
 - **sort**: sort by course field. valid fields are: id, category, shortname, fullname, idnumber, startdate, enddate, visible, groupmode' - *eg: sort=startdate*. If no sort is given and courseids is used, courses will be returned in the order specified in courseids.
 - **reverse**: reverses the sort order - *eg: reverse*
 
-### Filtering
+### Filtering for fields
 - **filters**: comma-separated list inside square brackets - additional filters for any course fields (including custom course fields). supports multiple operators (<, >, =) and the php keyword *NOW* for the current timestamp - *eg: filters=[startdate<NOW,mycustomfield=1]*. < and > will be accepted as &gt; and &lt;.
 - **cohortfield**: only shows courses that have a field with the same name as a cohort the user is enrolled in, and the specified value - *eg: cohortfields=1* or *cohortfields>2*
 
@@ -64,7 +67,7 @@ In addition to the standard fields of the course DB item and any course custom f
 ### Options via GET parameters
 - **useget**: enables all of the above options to also be applied via GET parameters in the URL. GET parameters will overrule parameters set in the filter - *eg: https://your-moodle-site.com?courselist_filter_startdate="<NOW"&courselist_filter_mycustomfield="=1"&courselist_cohortfields=">2"&courselist_sort=startdate&courselist_number=23&courseids=3,6,23* etc.
 
-For filters, either give the operator and the valuem eg *&courselist_filter_mycustomfield="=1"*, or only the value, to assume = as an operator, eg *&courselist_filter_mycustomfield=1*
+For filters and options that support other operators than "=", either give the operator and the value, eg *&courselist_filter_mycustomfield="=1"*, or only the value, to assume = as an operator, eg *&courselist_filter_mycustomfield=1*
 
 **Be aware, that courselist_filter and cohortfield values need to include the operator in the value!** So always use *courselist_filter_mycustomfield="=1"*, and not *courselist_filter_mycustomfield=1*.
 

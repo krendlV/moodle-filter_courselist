@@ -302,6 +302,53 @@ class filter_courselist extends moodle_text_filter {
             }
         }
 
+        // Filter for course completion.
+        if (array_key_exists('progress', $GET_options) || strpos($text, 'progress')) {
+
+            if (array_key_exists('progress', $GET_options)) {
+                $filtertext = $GET_options['progress'];
+            } else {
+                $filtertext = $text;
+            }
+            $parts = preg_split('/([><=]|&lt;|&gt;)/', $filtertext, -1, PREG_SPLIT_DELIM_CAPTURE);
+            if (count($parts) == 3) {
+                $operator = trim($parts[1]);
+                $value = trim($parts[2]);
+            } else {
+                $operator = "=";
+                $value = $parts[0];
+            }
+
+            foreach ($courses as $key => $course) {
+
+                // Get course progress.
+                $progress = \core_completion\progress::get_course_progress_percentage($course, $USER->id);
+
+                // Set course progress, just in case we need it later for custom mustache template.
+                $course->courseprogress = round($progress, 0);
+
+                // For this filter, we will treat NULL as 0, so any filter >0 only displays courses with any progress.
+                if ($progress == null ) {
+                    $progress = 0;
+                }
+
+                // Test all 3 possible operators.
+                if ($operator == "=") {
+                    if ($progress != $value) {
+                        unset($courses[$key]);
+                    }
+                } else if ($operator == ">" || $operator == "&gt;") {
+                    if ($progress < $value) {
+                        unset($courses[$key]);
+                    }
+                } else if ($operator == "<" || $operator == "&lt;") {
+                    if ($progress > $value) {
+                        unset($courses[$key]);
+                    }
+                }
+            }
+        }
+
         // Add customfields to courses.
         foreach ($courses as $key => $course) {
             if (is_object($course)) {
@@ -446,6 +493,7 @@ class filter_courselist extends moodle_text_filter {
         }
 
         // Filter param "number": limit number of displayed courses.
+        $resultnumber = count($courses);
         if (!array_key_exists('courselist_showall', $_GET)) {
             $showallbutton = false;
             if (strpos($text, 'number=') || array_key_exists('number', $GET_options)) {
@@ -459,7 +507,6 @@ class filter_courselist extends moodle_text_filter {
                 }
 
                 // Limit course number.
-                $resultnumber = count($courses);
                 if ($resultnumber > $number) {
                     $courses = array_slice($courses, 0, $number);
                     $showallbutton = true;
@@ -476,7 +523,6 @@ class filter_courselist extends moodle_text_filter {
         if (strpos($text, 'resultsummary')) {
             if ($showallbutton) {
                 $output .= '<span id="courselist-result-summary">' . get_string('resultcount_partial', 'filter_courselist', array('show' => $number, 'total' => $resultnumber)) . "</span>";
-
             } else {
                 $output .= '<span id="courselist-result-summary">' . get_string('resultcount_full', 'filter_courselist', $resultnumber) . "</span>";;
             }
@@ -516,12 +562,16 @@ class filter_courselist extends moodle_text_filter {
                         $course->courseimage = $courserenderer->get_generated_image_for_id($course->id);
                     }
                     $course->coursecategory = $DB->get_record('course_categories', array('id' => $course->category), 'name')->name;
-                    $progress = \core_completion\progress::get_course_progress_percentage($course, $USER->id);
-                    if ($progress !== null) {
-                        $course->courseprogress = round($progress, 0);
-                    }
                     $course->startdate = userdate($course->startdate);
                     $course->enddate = userdate($course->enddate);
+
+                    // Get course progress.
+                    if (!property_exists($course, 'progress')) {
+                        $progress = \core_completion\progress::get_course_progress_percentage($course, $USER->id);
+                        if ($progress !== null) {
+                            $course->courseprogress = round($progress, 0);
+                        }
+                    }
 
                     // Write all categories into classes to be compatible with theme_tm_moove custom course category colors.
                     $category_id = $course->category;
