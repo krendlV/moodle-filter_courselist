@@ -40,6 +40,9 @@ class filter_courselist extends moodle_text_filter {
 
     const TOKEN = '{{ courselist ';
 
+    /**
+     * Function called by Moodle.
+     */
     function filter($text, array $options = array()) {
         global $CFG, $PAGE;
 
@@ -493,6 +496,30 @@ class filter_courselist extends moodle_text_filter {
                     }
                 }
             }
+        }
+
+        // Sort by last access.
+        if ((array_key_exists('sort', $GET_options) && $GET_options['sort']="lastaccess")
+            || strpos($text, 'sort=lastaccess')) {
+            global $DB;
+
+            // Get last access date.
+            foreach ($courses as $course) {
+                if ($lastaccess = $DB->get_record('user_lastaccess', array('userid' => $USER->id, 'courseid' => $course->id))) {
+                    $course->lastaccess = $lastaccess->timeaccess;
+                } else {
+                    $course->lastaccess = 999999999;
+                }
+
+            }
+
+            // Sort by last access.
+            usort($courses, function($a, $b) {
+                if ($a->lastaccess == $b->lastaccess) {
+                    return 0;
+                }
+                return ($a->lastaccess > $b->lastaccess) ? -1 : 1;
+            });
         }
 
         // Filter param "reverse": reverses sort order.
