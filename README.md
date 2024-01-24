@@ -28,6 +28,8 @@ Add ''{{ courselist'' to your text, followed by filter parameters. All parameter
 
 If a completion higher than a certain value is specified, courses that do not have course completion activated will not be shown.
 
+The keyword "inprogress" will only show courses with a completion higher than zero, but lower than 100, *eg: completion=inprogress*
+
 ### Sorting
 - **sort**: sort by course field. valid fields are: id, category, shortname, fullname, idnumber, startdate, enddate, visible, groupmode' - *eg: sort=startdate*. If no sort is given and courseids is used, courses will be returned in the order specified in courseids.
 - **reverse**: reverses the sort order - *eg: reverse*

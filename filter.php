@@ -332,18 +332,26 @@ class filter_courselist extends moodle_text_filter {
                     $progress = 0;
                 }
 
+                // Keyword "inprogress"
+                if ($value == "inprogress") {
+                    if ($progress < 1 || $progress > 99) {
+                        unset($courses[$key]);
+                    }
+
                 // Test all 3 possible operators.
-                if ($operator == "=") {
-                    if ($progress != $value) {
-                        unset($courses[$key]);
-                    }
-                } else if ($operator == ">" || $operator == "&gt;") {
-                    if ($progress < $value) {
-                        unset($courses[$key]);
-                    }
-                } else if ($operator == "<" || $operator == "&lt;") {
-                    if ($progress > $value) {
-                        unset($courses[$key]);
+                } else {
+                    if ($operator == "=") {
+                        if ($progress != $value) {
+                            unset($courses[$key]);
+                        }
+                    } else if ($operator == ">" || $operator == "&gt;") {
+                        if ($progress < $value) {
+                            unset($courses[$key]);
+                        }
+                    } else if ($operator == "<" || $operator == "&lt;") {
+                        if ($progress > $value) {
+                            unset($courses[$key]);
+                        }
                     }
                 }
             }
