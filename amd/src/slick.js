@@ -1,4 +1,4 @@
-define(['jquery', 'slick'],
+define(['jquery'],
 /*
      _ _      _       _
  ___| (_) ___| | __  (_)___
