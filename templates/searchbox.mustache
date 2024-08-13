@@ -1,5 +1,5 @@
-<div class="simplesearchform m-auto">
-    <form autocomplete="off" method="get" accept-charset="utf-8" class="mform form-inline simplesearchform">
+<div class="simplesearchform m-auto pb-3">
+    <form id ="courselist-search-form" autocomplete="off" method="get" accept-charset="utf-8" class="mform form-inline simplesearchform">
         <div class="input-group m-auto">
             <label for="searchinput-645e1cb4d43a3645e1cb4c359910">
                 <span class="sr-only">{{ placeholder }}</span>
@@ -10,7 +10,30 @@
                     <i class="icon fa fa-search fa-fw " aria-hidden="true"></i>
                     <span class="sr-only">{{ placeholder }}</span>
                 </button>
-            </div>    
-        </div>  
+            </div>
+        </div>
     </form>
 </div>
+
+<script>
+    // Get the form element
+    var form = document.getElementById("courselist-search-form");
+
+    // Get the current URL
+    var url = new URL(window.location.href);
+
+    // Get the existing GET parameters
+    var params = url.searchParams;
+
+    // Iterate over the existing GET parameters
+    params.forEach(function(value, key) {
+        // Create a new hidden input field for each parameter
+        var input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = value;
+
+        // Add the input field to the form
+        form.appendChild(input);
+    });
+</script>
