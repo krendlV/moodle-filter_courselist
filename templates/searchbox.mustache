@@ -27,13 +27,21 @@
 
     // Iterate over the existing GET parameters
     params.forEach(function(value, key) {
-        // Create a new hidden input field for each parameter
-        var input = document.createElement("input");
-        input.type = "hidden";
-        input.name = key;
-        input.value = value;
 
-        // Add the input field to the form
-        form.appendChild(input);
+        if (key === "courselist_search") {
+            // Set the value of the search input field
+            form.querySelector("input[name='courselist_search']").value = value;
+
+        } else {
+
+            // Create a new hidden input field for each parameter
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = key;
+            input.value = value;
+
+            // Add the input field to the form
+            form.appendChild(input);
+        }
     });
 </script>
