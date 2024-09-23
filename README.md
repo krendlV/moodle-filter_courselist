@@ -50,6 +50,8 @@ You can put your own templates into the /templates subfolder, or use the existin
 Templates can aggregate the courses using any existing field, if aggregation is used inside the template, the template name has to include *aggregated-by-[criteria]*, eg,
 *linkedlist-aggregated-by-coursecategory*.
 
+Right now, the **Moodle Mobile App** will always display a modified version of course cards, and ignore templates.
+
 #### Included templates
 - **list**: similar to the "list" view of the myoverview block
 - **teaser**: similar to list, but smaller, usable in sidebars

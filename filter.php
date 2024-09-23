@@ -575,7 +575,15 @@ class filter_courselist extends moodle_text_filter {
             }
 
             // Render from alternative template.
-            if (strpos($text, 'template=') || array_key_exists('template', $GET_options)) {
+            // Check the User-Agent header for MoodleMobile or MoodleMobileCustom
+            if (isset($_SERVER['HTTP_USER_AGENT']) &&
+                (strpos($_SERVER['HTTP_USER_AGENT'], 'MoodleMobile') !== false ||
+                 strpos($_SERVER['HTTP_USER_AGENT'], 'MoodleMobileCustom') !== false)) {
+                $mobile_app = true;
+            } else {
+                $mobile_app = false;
+            }
+            if (strpos($text, 'template=') || array_key_exists('template', $GET_options) || $mobile_app) {
 
                 global $CFG, $DB, $OUTPUT, $USER;
 
@@ -585,6 +593,10 @@ class filter_courselist extends moodle_text_filter {
                 } else {
                     $alttemplate = explode('template=', $text)[1];
                     $alttemplate = explode(' ', $alttemplate)[0];
+                }
+
+                if ($mobile_app) {
+                    $alttemplate = 'coursecard-mobile';
                 }
 
                 // Write courses using alternative Mustache template.
