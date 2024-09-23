@@ -1,4 +1,4 @@
-<ul class="list-group">    
+<ul class="list-group">
     {{#courses}}
         <li class="list-group-item course-listitem border-left-0 border-right-0 border-top-0 px-0 py-2" data-region="course-content" data-course-id="{{ id }}">
             <div class="row m-0">
@@ -10,7 +10,7 @@
                     </a>
                 </div>
                 <div class="col-md-8 d-flex flex-column">
-                    <a href="/course/view.php?id={{ id }}" class="aalink coursename">                
+                    <a href="/course/view.php?id={{ id }}" class="aalink coursename">
                         <span class="sr-only">
                             {{#str}}aria:coursename, core_course{{/str}}
                         </span>
@@ -30,7 +30,7 @@
                             <div class="progress-bar" role="progressbar" aria-valuenow="0" style="width: {{ courseprogress }}%" aria-valuemin="0" aria-valuemax="0"></div>
                         </div>
                         <p class="mb-0">{{courseprogress}} {{#str}}completepercent, block_myoverview{{/str}}</p>
-                    </div>               
+                    </div>
                     {{/courseprogress}}
                 </div>
             </div>

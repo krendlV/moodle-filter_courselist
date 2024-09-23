@@ -12,7 +12,7 @@
 }
 @media (max-width: 768px) {
   .slick-carousel .slick-dots .dots-total, .slick-carousel .slick-dots .slick-active {
-    display: inline-block;    
+    display: inline-block;
     width: unset;
     margin-right: 1px;
   }
@@ -28,8 +28,7 @@
     color: unset;
     padding: 0;
     width: unset;
-    text-align: right;    
+    text-align: right;
     margin: 0;
   }
 }
-

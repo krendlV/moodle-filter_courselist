@@ -6,15 +6,15 @@
     margin: 0 30px;
     height: 1000px;
 }
-.slick-carousel.responsive .slick-prev {        
+.slick-carousel.responsive .slick-prev {
     width: 40px;
     height: 40px;
     z-index: 99999;
     left: 0;
 }
-.slick-carousel.responsive .slick-next {        
+.slick-carousel.responsive .slick-next {
     width: 40px;
-    height: 40px;    
+    height: 40px;
     z-index: 99999;
     right: 0px;
 }
@@ -22,7 +22,7 @@
     color: var(--primary);
     font-size: 40px;
 }
-.slick-carousel.responsive .slick-slide {    
+.slick-carousel.responsive .slick-slide {
     padding: 16px;
 }
 .slick-carousel.responsive .slick-slide .dashboard-card {
@@ -43,7 +43,7 @@
                     <a href="/course/index.php?categoryid={{category}}">{{coursecategory}}</a>
                 </div>
                 <a href="{{wwwroot}}/course/view.php?id={{id}}" tabindex="-1">
-                    <div class="card-img dashboard-card-img{{defaultimgclass}}" style='background-image: url("{{{courseimage}}}");'>                
+                    <div class="card-img dashboard-card-img{{defaultimgclass}}" style='background-image: url("{{{courseimage}}}");'>
                         <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
                     </div>
                 </a>
@@ -93,7 +93,7 @@
 
     </div>
 </div>
-				
-{{#js}}        
-    require(['filter_courselist/slick_carousel'], (module) => module.init("#carousel-{{uniqid}}"));        
+
+{{#js}}
+    require(['filter_courselist/slick_carousel'], (module) => module.init("#carousel-{{uniqid}}"));
 {{/js}}
