@@ -17,16 +17,14 @@
         <ion-card-content>
 
             {{^visible}}
-                <ion-text>
+                <ion-text style="display: block;">
                     {{#str}} hiddenfromstudents {{/str}}
                 </ion-text>
             {{/visible}}
-
-            <div>
-                <strong>
-                   {{coursecategory}}
-                </strong>
-            </div>
+            
+            <ion-text style="font-weight: bold; display: block;">
+                {{coursecategory}}
+            </ion-text>            
 
             {{#courseprogress}}
 
