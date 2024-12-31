@@ -663,12 +663,17 @@ class filter_courselist extends moodle_text_filter {
                 // Global variables.
                 $data['wwwroot'] = $CFG->wwwroot;
 
-                // Check if template exists.
-                $template_file_path = $CFG->dirroot . "/filter/courselist/templates/$alttemplate" . '.mustache';
-                if (file_exists($template_file_path)) {
-                    $output .= $OUTPUT->render_from_template('filter_courselist/' . $alttemplate, $data);
+                // Render from template.
+                if (str_contains($alttemplate, '/')) {
+                    $output .= $OUTPUT->render_from_template($alttemplate, $data);
                 } else {
-                    $output = $this->return_error(get_string('errortemplate', 'filter_courselist') . $template_file_path, $text);
+                // Check if template exists.
+                    $template_file_path = $CFG->dirroot . "/filter/courselist/templates/$alttemplate" . '.mustache';
+                    if (file_exists($template_file_path)) {
+                        $output .= $OUTPUT->render_from_template('filter_courselist/' . $alttemplate, $data);
+                    } else {
+                        $output = $this->return_error(get_string('errortemplate', 'filter_courselist') . $template_file_path, $text);
+                    }
                 }
 
             // Render coursecards.
