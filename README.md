@@ -47,6 +47,8 @@ When including custom course fields, be aware of how the values are saved, in or
 
 You can put your own templates into the /templates subfolder, or use the existing ones.
 
+You can also use templates from other components by specifying them with their full name, eg *theme_tm_moove/custom_coursecards*
+
 Templates can aggregate the courses using any existing field, if aggregation is used inside the template, the template name has to include *aggregated-by-[criteria]*, eg,
 *linkedlist-aggregated-by-coursecategory*.
 
