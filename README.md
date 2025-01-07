@@ -31,7 +31,7 @@ If a completion higher than a certain value is specified, courses that do not ha
 The keyword "inprogress" will only show courses with a completion higher than zero, but lower than 100, *eg: completion=inprogress*
 
 ### Sorting
-- **sort**: sort by course field. valid fields are: id, category, shortname, fullname, idnumber, startdate, enddate, visible, groupmode' - *eg: sort=startdate*. If no sort is given and courseids is used, courses will be returned in the order specified in courseids.
+- **sort**: sort by course field. valid fields are: id, category, shortname, fullname, idnumber, startdate, enddate, visible, groupmode, lastaccess' - *eg: sort=startdate*. If no sort is given and courseids is used, courses will be returned in the order specified in courseids.
 - **reverse**: reverses the sort order - *eg: reverse*
 
 ### Filtering for fields
@@ -46,8 +46,6 @@ When including custom course fields, be aware of how the values are saved, in or
 - **template**: alternative mustache template to use instead of of the built-in Moodlecourse cards - *eg: template=list*.
 
 You can put your own templates into the /templates subfolder, or use the existing ones.
-
-You can also use templates from other components by specifying them with their full name, eg *theme_tm_moove/custom_coursecards*
 
 Templates can aggregate the courses using any existing field, if aggregation is used inside the template, the template name has to include *aggregated-by-[criteria]*, eg,
 *linkedlist-aggregated-by-coursecategory*.
