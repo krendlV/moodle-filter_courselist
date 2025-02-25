@@ -21,28 +21,21 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace filter_courselist;
 
 use core_course\customfield\course_handler;
 
-require_once($CFG->dirroot . '/course/renderer.php');
-
-// Returns course cards for all courses that meet the search criteria.
-
 /**
- * Implementation of the Moodle filter API for the Courselist filter.
+ * Implementation of the Moodle filter API for the Course list filter.
  *
  * @copyright  2023 think-modular
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-class filter_courselist extends moodle_text_filter {
+class text_filter extends \core_filters\text_filter {
 
     const TOKEN = '{{ courselist ';
 
-    /**
-     * Function called by Moodle.
-     */
+    #[\Override]
     function filter($text, array $options = array()) {
         global $CFG, $PAGE;
 
@@ -570,7 +563,7 @@ class filter_courselist extends moodle_text_filter {
 
             // Re-write file links in course summary.
             foreach ($courses as $course) {
-                $context = context_course::instance($course->id);
+                $context = \context_course::instance($course->id);
                 $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary', null);
             }
 
