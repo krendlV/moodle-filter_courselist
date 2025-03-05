@@ -1,4 +1,4 @@
-define(['jquery', 'slick'],
+define(['jquery', 'filter_courselist/slick'],
     function($) {
         return {
         'init': function(carouselId) {
