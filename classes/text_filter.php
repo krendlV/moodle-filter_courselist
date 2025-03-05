@@ -473,7 +473,7 @@ class text_filter extends \core_filters\text_filter {
         }
 
         // Filter for searchbox entry.
-        if (array_key_exists('courselist_search', $_GET)) {
+        if (array_key_exists('courselist_search', $_GET) && !str_contains($text, 'ignoresearch')) {
             if ($searchterm = $_GET['courselist_search']) {
                 $searchterm = str_replace(array('\'', '"'), '', $searchterm);
                 $search_properties = ['shortname', 'fullname', 'summary'];

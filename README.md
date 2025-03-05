@@ -13,6 +13,7 @@ Add ''{{ courselist'' to your text, followed by filter parameters. All parameter
 ### Basic features
 - **title**: a title to put as a h3 over the coursecards. if no results are returned, no title will be shown.
 - **search**: will include a searchbox at the top of the coursecards grid, that searches for text inside the course's shortname, fullname and summary. if more than one coursecard grids exist on this page, the search will be applied to all of them, so it does not make sense to include searchboxes in more than one coursegrid.
+- **ignoresearch**: ignore searchbox inputs for this coursefilter element
 - **number**: maximum number of courses to display.
 - **showall**: includes a show all button at the bottom of the coursecards grid.
 - **noresults**: text to show when there are no results
@@ -58,6 +59,7 @@ Right now, the **Moodle Mobile App** will always display a modified version of c
 - **list**: similar to the "list" view of the myoverview block
 - **teaser**: similar to list, but smaller, usable in sidebars
 - **slick-carousel**: a carousel using the awesome slick carousel - https://kenwheeler.github.io/slick/
+- **slick-carousel-hero**: a single slide that can be used as a hero
 - **textlist-aggregated-by-coursecategory**: a simple list aggregated by course category
 - **linkedlist-aggregated-by-coursecategory**: a simple list aggregated by course category, with the courses linked.
 

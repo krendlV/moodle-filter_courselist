@@ -1,0 +1,99 @@
+<link rel="stylesheet" type="text/css" href="{{ wwwroot }}/filter/courselist/lib/slick/slick.css"/>
+<link rel="stylesheet" type="text/css" href="{{ wwwroot }}/filter/courselist/lib/slick/slick-theme.css"/>
+
+<style>
+.slick-carousel.responsive .slick-carousel-container {
+    margin: 0 30px;
+    height: 1000px;
+}
+.slick-carousel.responsive .slick-prev {
+    width: 40px;
+    height: 40px;
+    z-index: 99999;
+    left: 0;
+}
+.slick-carousel.responsive .slick-next {
+    width: 40px;
+    height: 40px;
+    z-index: 99999;
+    right: 0px;
+}
+.slick-carousel.responsive .slick-prev:before, .slick-carousel.responsive .slick-next:before {
+    color: var(--primary);
+    font-size: 40px;
+}
+.slick-carousel.responsive .slick-slide {
+    padding: 16px;
+}
+.slick-carousel.responsive .slick-slide .dashboard-card {
+    margin: 0 !important;
+}
+.hero-infobox {
+    position: absolute;
+    background-color: rgb(255, 255, 255, 0.75);
+    top: 1em;
+    left: 1em;
+    font-size: 2em;
+}
+.dashboard-card .dashboard-card-img.hero-img {
+    height: 25rem !important;
+}
+</style>
+
+<div id="carousel-container-{{uniqid}}" class="slick-carousel-container invisible">
+    <div id="carousel-{{uniqid}}" class="slick-carousel responsive card-deck">
+
+        {{#courses}}
+        <div>
+            <div class="card dashboard-card course-{{{id}}}{{{categories}}} w-100" role="listitem"
+                data-region="course-content"
+                data-course-id="{{{id}}}">
+                <a href="{{wwwroot}}/course/view.php?id={{id}}" tabindex="-1">
+                    <div class="hero-img card-img dashboard-card-img{{defaultimgclass}}" style='background-image: url("{{{courseimage}}}");'>
+                        <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
+                    </div>
+                </a>
+                <div class="hero-infobox">
+                    <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
+                        <div class="d-flex align-items-start">
+                            <div class="w-100">
+                                {{#showshortname}}
+                                    <div class="text-muted muted d-flex mb-1 flex-wrap">
+                                        <span class="sr-only">
+                                            {{#str}}aria:courseshortname, core_course{{/str}}
+                                        </span>
+                                        <div>
+                                            {{{shortname}}}
+                                        </div>
+                                        {{$divider}}{{/divider}}
+                                    </div>
+                                {{/showshortname}}
+                                <h2 class="aalink coursename mr-2 mb-1">
+                                    {{> core_course/favouriteicon }}
+                                    <span class="sr-only">
+                                            {{#str}}aria:coursename, core_course{{/str}}
+                                        </span>
+                                    {{fullname}}
+                                </h2>
+                                <div class="course-summary">
+                                    {{{summary}}}
+                                </div>
+                                {{^visible}}
+                                    <div class="d-flex flex-wrap">
+                                        <span class="badge badge-info">{{#str}} hiddenfromstudents {{/str}}</span>
+                                    </div>
+                                {{/visible}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/courses}}
+
+    </div>
+</div>
+
+{{#js}}
+    require(['filter_courselist/slick_carousel_hero'], (module) => module.init("#carousel-{{uniqid}}"));
+{{/js}}
