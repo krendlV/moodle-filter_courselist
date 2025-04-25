@@ -440,6 +440,7 @@ class text_filter extends \core_filters\text_filter {
             $cohorts = cohort_get_user_cohorts($USER->id);
 
             // Get cohort ids.
+            $cohortids = array();
             foreach ($cohorts as $cohort) {
                 $cohortids[] = $cohort->idnumber;
             }
