@@ -22,8 +22,8 @@ Add ''{{ courselist'' to your text, followed by filter parameters. All parameter
 ### Course properties
 - **enrolled**: if set to true,  only lists courses the user is enrolled in, if set to false, only lists courses the user is not enrolled in - *eg: enrolled=true*
 - **showhidden**: show hidden courses even if the user cannot access them (only works without "enrolled=true")
-- **courseids**: comma-separated list inside square brackets - only lists courses with this ID - *eg: courseid=[2,4]*
-- **categoryids**: only lists courses from this category. You can specify multiple categories inside square brackets, separated by a comma.
+- **courseids**: comma-separated list inside square brackets - only lists courses with this ID - *eg: courseids=[2,4]*
+- **categoryids**: only lists courses from this category. You can specify multiple categories inside square brackets, separated by a comma - *eg: courseids=[2,4]*
 - **subcategories**: will also list courses from subcategories of the specified categoryids
 - **progress**: will only show courses with a certain progress in course completion for this user - *eg: completion>50*
 
@@ -73,7 +73,7 @@ In addition to the standard fields of the course DB item and any course custom f
 - {{ wwwroot }} - the site's wwwroot
 
 ### Options via GET parameters
-- **useget**: enables all of the above options to also be applied via GET parameters in the URL. GET parameters will overrule parameters set in the filter - *eg: https://your-moodle-site.com?courselist_filter_startdate="<NOW"&courselist_filter_mycustomfield="=1"&courselist_cohortfields=">2"&courselist_sort=startdate&courselist_number=23&courseids=3,6,23* etc.
+- **useget**: enables all of the above options to also be applied via GET parameters in the URL. GET parameters will overrule parameters set in the filter - *eg: https://your-moodle-site.com?courselist_filter_startdate="<NOW"&courselist_filter_mycustomfield="=1"&courselist_cohortfields=">2"&courselist_sort=startdate&courselist_number=23&courselist_courseids=3,6,23* etc.
 
 For filters and options that support other operators than "=", either give the operator and the value, eg *&courselist_filter_mycustomfield="=1"*, or only the value, to assume = as an operator, eg *&courselist_filter_mycustomfield=1*
 
