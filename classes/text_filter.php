@@ -208,7 +208,7 @@ class text_filter extends \core_filters\text_filter {
         }
 
         // Filter param "search": Include search form.
-        if (strpos($text, 'search')) {
+        if (strpos($text, 'search') && !strpos($text, 'ignoresearch')) {
             $output = $this->searchbox();
         }
 
@@ -238,14 +238,14 @@ class text_filter extends \core_filters\text_filter {
 
         // Filter param "categoryids": Only courses from selected categories.
         if (array_key_exists('categoryids', $GET_options)) {
-            $categoryids = explode(',', $GET_options['categoryids']);            
+            $categoryids = explode(',', $GET_options['categoryids']);
         } elseif (strpos($text, 'categoryids=[')) {
             $categoryids = explode('categoryids=[', $text)[1];
             $categoryids = explode(']', $categoryids)[0];
             $categoryids = explode(',', $categoryids);
         } else {
             $categoryids = array();
-        }        
+        }
 
         // Filter param "subcategories": add subcategories.
         if (strpos($text, 'subcategories') || array_key_exists('subcategories', $GET_options)) {
