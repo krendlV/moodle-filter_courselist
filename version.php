@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'filter_courselist';
 $plugin->requires  = 2021040100;
-$plugin->version   = 2025050201;
-$plugin->release = 'v4.5 - 2.0.2';
+$plugin->version   = 2025050202;
+$plugin->release = 'v4.5 - 2.0.3';
 $plugin->maturity = MATURITY_STABLE;
 $plugin->supported = [405, 405];

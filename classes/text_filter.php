@@ -357,10 +357,24 @@ class text_filter extends \core_filters\text_filter {
         foreach ($courses as $key => $course) {
             if (is_object($course)) {
                 $handler = course_handler::create($course->id);
-                $customfields = $handler->export_instance_data($course->id, true);
+                $customfields = $handler->get_instance_data($course->id, true);
                 foreach ($customfields as $customfield) {
-                    $fieldname = $customfield->get_shortname();
-                    $course->$fieldname = $customfield->get_data_controller()->get_value();
+                    $field = $customfield->get_field();
+                    $shortname = $field->get('shortname');
+                    $type = $field->get('type');
+                    $rawvalue = $customfield->get_value();
+
+                    // Add raw value.
+                    $fieldname = $shortname;
+                    $course->$fieldname = $rawvalue;
+                    $course->{$fieldname . '_label'} = $field->get('name');
+
+                    // Get label for dropdowns.
+                    if ($type === 'select') {
+                        $options = $field->get_options();
+                        $label = $options[$rawvalue] ?? $rawvalue;
+                        $course->{$fieldname . '_value'} = $label;
+                    }
                 }
             }
         }
