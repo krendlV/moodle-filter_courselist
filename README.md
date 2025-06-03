@@ -56,6 +56,7 @@ Templates can aggregate the courses using any existing field, if aggregation is 
 Right now, the **Moodle Mobile App** will always display a modified version of course cards, and ignore templates.
 
 #### Included templates
+- **one-row-pagination**: a paginated one-row list of coursecards
 - **list**: similar to the "list" view of the myoverview block
 - **teaser**: similar to list, but smaller, usable in sidebars
 - **slick-carousel**: a carousel using the awesome slick carousel - https://kenwheeler.github.io/slick/
