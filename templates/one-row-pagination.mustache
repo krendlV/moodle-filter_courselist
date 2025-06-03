@@ -35,7 +35,7 @@
         <div class="card dashboard-card course-{{{id}}}{{{categories}}}" role="listitem"
             data-region="course-content"
             data-course-id="{{{id}}}">
-            <a href="/course/view.php?id={{ id }}" tabindex="-1">
+            <a href="{{wwwroot}}/course/view.php?id={{ id }}" tabindex="-1">
                 <div class="card-img dashboard-card-img{{defaultimgclass}}" style='background-image: url("{{{courseimage}}}");'>
                     <div class="tm-moove-category course-category">
                         {{ coursecategory }}
@@ -46,7 +46,7 @@
             <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
                 <div class="d-flex align-items-start">
                     <div class="w-100">
-                        <a href="/course/view.php?id={{ id }}" class="aalink coursename mr-2 mb-1">
+                        <a href="{{wwwroot}}/course/view.php?id={{ id }}" class="aalink coursename mr-2 mb-1">
                             <span class="sr-only">
                                     {{#str}}aria:coursename, core_course{{/str}}
                                 </span>
