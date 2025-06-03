@@ -5,7 +5,7 @@
     width: 100%;
 }
 
-#pagination-controls {
+.pagination-controls {
   display: flex;
   justify-content: center;
   gap: 0.5em;
@@ -13,8 +13,9 @@
   margin-top: 1em;
 }
 
-#pagination-controls button {
-  padding: 0.4em 0.8em;
+.pagination-controls button {
+    white-space: nowrap;
+    padding: 0 !important;
   border: 1px solid #ccc;
   background-color: white;
   cursor: pointer;
@@ -22,16 +23,14 @@
     width: 2.5em;
 }
 
-#pagination-controls button.active {
+.pagination-controls button.active {
   background-color: #007c2f;
   color: white;
   font-weight: bold;
 }
-
-
 </style>
 
-<div class="card-deck dashboard-card-deck tm-pagination {{$classes}}{{/classes}}" data-region="card-deck" role="list">
+<div data-uniqid="{{uniqid}}" class="card-deck dashboard-card-deck tm-pagination {{$classes}}{{/classes}}" data-region="card-deck" role="list">
     {{#courses}}
         <div class="card dashboard-card course-{{{id}}}{{{categories}}}" role="listitem"
             data-region="course-content"
@@ -70,104 +69,110 @@
         </div>
     {{/courses}}
 </div>
-
-<div id="pagination-controls"></div>
+<div class="pagination-controls"></div>
 
 <script>
-// JS pagination logic.
-const container = document.querySelector('.tm-pagination');
-const items = Array.from(container.children);
-const controls = document.getElementById('pagination-controls');
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.tm-pagination').forEach(function(container) {
+    const items = Array.from(container.children);
+    const controls = container.parentElement.querySelector('.pagination-controls');
 
-let itemsPerPage = 1;
-let currentPage = 0;
-let totalPages = 1;
+    let itemsPerPage = 1;
+    let currentPage = 0;
+    let totalPages = 1;
 
-function calculateItemsPerPage() {
-  const item = items[0];
-  const itemStyle = getComputedStyle(item);
-  const itemWidth = item.offsetWidth + parseFloat(itemStyle.marginRight || 0);
-  const containerWidth = container.clientWidth;
-  itemsPerPage = Math.max(1, Math.floor(containerWidth / itemWidth));
-  totalPages = Math.ceil(items.length / itemsPerPage);
-}
-
-function showPage(page) {
-  currentPage = page;
-  items.forEach((item, i) => {
-    item.classList.add('hidden');
-    if (i >= page * itemsPerPage && i < (page + 1) * itemsPerPage) {
-      item.classList.remove('hidden');
+    function calculateItemsPerPage() {
+      const item = items[0];
+      const itemStyle = getComputedStyle(item);
+      const itemWidth = item.offsetWidth + parseFloat(itemStyle.marginRight || 0);
+      const containerWidth = container.clientWidth;
+      itemsPerPage = Math.max(1, Math.floor(containerWidth / itemWidth));
+      totalPages = Math.ceil(items.length / itemsPerPage);
     }
+
+    function showPage(page) {
+      currentPage = page;
+      items.forEach((item, i) => {
+        item.classList.add('hidden');
+        if (i >= page * itemsPerPage && i < (page + 1) * itemsPerPage) {
+          item.classList.remove('hidden');
+        }
+      });
+      updatePaginationButtons();
+    }
+
+    function updatePaginationButtons() {
+      controls.innerHTML = '';
+
+      const prev = document.createElement('button');
+      prev.textContent = '<';
+      prev.disabled = currentPage === 0;
+      prev.addEventListener('click', function () {
+        showPage(currentPage - 1);
+      });
+      controls.appendChild(prev);
+
+      const start = Math.max(0, currentPage - 2);
+      const end = Math.min(totalPages - 1, currentPage + 2);
+
+      if (start > 0) {
+        const first = document.createElement('button');
+        first.textContent = '1';
+        first.addEventListener('click', function () {
+          showPage(0);
+        });
+        controls.appendChild(first);
+
+        if (start > 1) {
+          const dots = document.createElement('span');
+          dots.textContent = '…';
+          dots.style.padding = '0.4em';
+          controls.appendChild(dots);
+        }
+      }
+
+      for (let i = start; i <= end; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i + 1;
+        if (i === currentPage) btn.classList.add('active');
+        btn.addEventListener('click', function () {
+          showPage(i);
+        });
+        controls.appendChild(btn);
+      }
+
+      if (end < totalPages - 1) {
+        if (end < totalPages - 2) {
+          const dots = document.createElement('span');
+          dots.textContent = '…';
+          dots.style.padding = '0.4em';
+          controls.appendChild(dots);
+        }
+
+        const last = document.createElement('button');
+        last.textContent = totalPages;
+        last.addEventListener('click', function () {
+          showPage(totalPages - 1);
+        });
+        controls.appendChild(last);
+      }
+
+      const next = document.createElement('button');
+      next.textContent = '>';
+      next.disabled = currentPage === totalPages - 1;
+      next.addEventListener('click', function () {
+        showPage(currentPage + 1);
+      });
+      controls.appendChild(next);
+    }
+
+    function update() {
+      calculateItemsPerPage();
+      showPage(0);
+    }
+
+    window.addEventListener('resize', update);
+    update();
   });
-  updatePaginationButtons();
-}
-
-function updatePaginationButtons() {
-  controls.innerHTML = '';
-
-  // Prev button
-  const prev = document.createElement('button');
-  prev.textContent = '<';
-  prev.disabled = currentPage === 0;
-  prev.addEventListener('click', () => showPage(currentPage - 1));
-  controls.appendChild(prev);
-
-  // Page numbers: show only (current - 2) to (current + 2)
-  const start = Math.max(0, currentPage - 2);
-  const end = Math.min(totalPages - 1, currentPage + 2);
-
-  if (start > 0) {
-    const first = document.createElement('button');
-    first.textContent = '1';
-    first.addEventListener('click', () => showPage(0));
-    controls.appendChild(first);
-    if (start > 1) {
-      const dots = document.createElement('span');
-      dots.textContent = '…';
-      dots.style.padding = '0.4em';
-      controls.appendChild(dots);
-    }
-  }
-
-  for (let i = start; i <= end; i++) {
-    const btn = document.createElement('button');
-    btn.textContent = i + 1;
-    if (i === currentPage) btn.classList.add('active');
-    btn.addEventListener('click', () => showPage(i));
-    controls.appendChild(btn);
-  }
-
-  if (end < totalPages - 1) {
-    if (end < totalPages - 2) {
-      const dots = document.createElement('span');
-      dots.textContent = '…';
-      dots.style.padding = '0.4em';
-      controls.appendChild(dots);
-    }
-    const last = document.createElement('button');
-    last.textContent = totalPages;
-    last.addEventListener('click', () => showPage(totalPages - 1));
-    controls.appendChild(last);
-  }
-
-  // Next button
-  const next = document.createElement('button');
-  next.textContent = '>';
-  next.disabled = currentPage === totalPages - 1;
-  next.addEventListener('click', () => showPage(currentPage + 1));
-  controls.appendChild(next);
-}
-
-
-function update() {
-  calculateItemsPerPage();
-  showPage(0);
-}
-
-window.addEventListener('resize', update);
-update();
-
+});
 </script>
-
-
