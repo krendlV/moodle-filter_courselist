@@ -1,0 +1,143 @@
+<style>
+.tm-pagination {
+    flex-wrap: nowrap;
+    overflow: hidden !important;
+    width: 100%;
+}
+
+#pagination-controls {
+  display: flex;
+  justify-content: center;
+  gap: 0.5em;
+  flex-wrap: wrap;
+  margin-top: 1em;
+}
+
+#pagination-controls button {
+  padding: 0.4em 0.8em;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+  height: 2.5em;
+    width: 2.5em;
+}
+
+#pagination-controls button.active {
+  background-color: #007c2f;
+  color: white;
+  font-weight: bold;
+}
+
+
+</style>
+
+<div class="card-deck dashboard-card-deck tm-pagination {{$classes}}{{/classes}}" data-region="card-deck" role="list">
+    {{#courses}}
+        <div class="card dashboard-card course-{{{id}}}{{{categories}}}" role="listitem"
+            data-region="course-content"
+            data-course-id="{{{id}}}">
+            <a href="/course/view.php?id={{ id }}" tabindex="-1">
+                <div class="card-img dashboard-card-img{{defaultimgclass}}" style='background-image: url("{{{courseimage}}}");'>
+                    <div class="tm-moove-category course-category">
+                        {{ coursecategory }}
+                    </div>
+                    <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
+                </div>
+            </a>
+            <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
+                <div class="d-flex align-items-start">
+                    <div class="w-100">
+                        <a href="/course/view.php?id={{ id }}" class="aalink coursename mr-2 mb-1">
+                            <span class="sr-only">
+                                    {{#str}}aria:coursename, core_course{{/str}}
+                                </span>
+                            {{ fullname }}
+                        </a>
+                        {{^visible}}
+                            <div class="d-flex flex-wrap">
+                                <span class="badge badge-info">{{#str}} hiddenfromstudents {{/str}}</span>
+                            </div>
+                        {{/visible}}
+                    </div>
+                </div>
+                <div class="course-summary">
+                    <div class="no-overflow">{{{ summary }}}</div>
+                </div>
+            </div>
+            <div class="d-flex align-items-start">
+                {{$progress}}{{/progress}}
+            </div>
+        </div>
+    {{/courses}}
+</div>
+
+<div id="pagination-controls"></div>
+
+<script>
+// JS pagination logic.
+const container = document.querySelector('.tm-pagination');
+const items = Array.from(container.children);
+const controls = document.getElementById('pagination-controls');
+
+let itemsPerPage = 1;
+let currentPage = 0;
+let totalPages = 1;
+
+function calculateItemsPerPage() {
+  const item = items[0];
+  const itemStyle = getComputedStyle(item);
+  const itemWidth = item.offsetWidth + parseFloat(itemStyle.marginRight || 0);
+  const containerWidth = container.clientWidth;
+  itemsPerPage = Math.max(1, Math.floor(containerWidth / itemWidth));
+  totalPages = Math.ceil(items.length / itemsPerPage);
+}
+
+function showPage(page) {
+  currentPage = page;
+  items.forEach((item, i) => {
+    item.classList.add('hidden');
+    if (i >= page * itemsPerPage && i < (page + 1) * itemsPerPage) {
+      item.classList.remove('hidden');
+    }
+  });
+  updatePaginationButtons();
+}
+
+function updatePaginationButtons() {
+  controls.innerHTML = '';
+
+  // Prev button
+  const prev = document.createElement('button');
+  prev.textContent = '<';
+  prev.disabled = currentPage === 0;
+  prev.addEventListener('click', () => showPage(currentPage - 1));
+  controls.appendChild(prev);
+
+  // Numbered buttons
+  for (let i = 0; i < totalPages; i++) {
+    const btn = document.createElement('button');
+    btn.textContent = i + 1;
+    if (i === currentPage) btn.classList.add('active');
+    btn.addEventListener('click', () => showPage(i));
+    controls.appendChild(btn);
+  }
+
+  // Next button
+  const next = document.createElement('button');
+  next.textContent = '>';
+  next.disabled = currentPage === totalPages - 1;
+  next.addEventListener('click', () => showPage(currentPage + 1));
+  controls.appendChild(next);
+}
+
+function update() {
+  calculateItemsPerPage();
+  showPage(0);
+}
+
+window.addEventListener('resize', update);
+update();
+
+</script>
+
+
