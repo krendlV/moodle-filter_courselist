@@ -159,7 +159,7 @@ class text_filter extends \core_filters\text_filter {
 
         // Get subcategories.
         foreach ($categoryids as $categoryid) {
-            $category = core_course_category::get($categoryid);
+            $category = \core_course_category::get($categoryid);
             $subcategories = $category->get_all_children_ids();
             $categoryids = array_merge($subcategories, $categoryids);
         }
