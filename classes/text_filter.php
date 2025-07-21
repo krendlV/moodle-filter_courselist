@@ -298,6 +298,30 @@ class text_filter extends \core_filters\text_filter {
             }
         }
 
+        // Filter out coursers where user does not have required role.
+        if ((strpos($text, 'roles=')) || array_key_exists('roles', $GET_options)) {
+            $roles = array();
+            if (array_key_exists('roles', $GET_options)) {
+                $roles = explode(',', $GET_options['roles']);
+            } else {
+                $roles = explode('roles=[', $text)[1];
+                $roles = explode(']', $roles)[0];
+                $roles = explode(',', $roles);
+            }
+
+            // Filter courses by roles.
+            foreach ($courses as $key => $course) {
+                $context = \context_course::instance($course->id);
+                $user_roles = get_user_roles($context, $USER->id, true);
+                foreach ($user_roles as $role) {
+                    if (in_array($role->roleid, $roles)) {
+                        continue 2; // User has required role, keep course.
+                    }
+                }
+                unset($courses[$key]); // User does not have required role, remove course.
+            }
+        }
+
         // Filter for course completion.
         if (array_key_exists('progress', $GET_options) || strpos($text, 'progress')) {
 

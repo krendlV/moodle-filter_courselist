@@ -26,6 +26,7 @@ Add ''{{ courselist'' to your text, followed by filter parameters. All parameter
 - **categoryids**: only lists courses from this category. You can specify multiple categories inside square brackets, separated by a comma - *eg: courseids=[2,4]*
 - **subcategories**: will also list courses from subcategories of the specified categoryids
 - **progress**: will only show courses with a certain progress in course completion for this user - *eg: completion>50*
+- **roles**: will only show courses where the user has a certain role in the course - *eg: roles=[3,5]*
 
 If a completion higher than a certain value is specified, courses that do not have course completion activated will not be shown.
 
