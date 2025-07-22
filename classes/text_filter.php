@@ -531,7 +531,7 @@ class text_filter extends \core_filters\text_filter {
         }
 
         // Sort by last access.
-        if ((array_key_exists('sort', $GET_options) && $GET_options['sort']="lastaccess")
+        if ((array_key_exists('sort', $GET_options) && $GET_options['sort'] == "lastaccess")
             || strpos($text, 'sort=lastaccess')) {
             global $DB;
 
