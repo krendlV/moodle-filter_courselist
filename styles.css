@@ -1,6 +1,8 @@
 /* fix for moove cards */
 .pagelayout-frontpage .dashboard-card.w-100, .pagelayout-coursecategory .dashboard-card.w100 {
+  min-width: 100% !important;
   width: 100% !important;
+  max-width: 100% !important;
 }
 
 /* pagination numbers instead of dots on mobile #8 */
