@@ -38,7 +38,7 @@ The keyword "inprogress" will only show courses with a completion higher than ze
 
 ### Filtering for fields
 - **filters**: comma-separated list inside square brackets - additional filters for any course fields (including custom course fields). supports multiple operators (<, >, =) and the php keyword *NOW* for the current timestamp - *eg: filters=[startdate<NOW,mycustomfield=1]*. < and > will be accepted as &gt; and &lt;.
-- **cohortfield**: only shows courses that have a field with the same name as a cohort the user is enrolled in, and the specified value - *eg: cohortfields=1* or *cohortfields>2*
+- **cohortfield**: only shows courses that have a field with the same name as a cohort the user is enrolled in, and the specified value - *eg: cohortfield=1* or *cohortfield>2*
 
 This allows you to make custom course field checkboxes named after cohorts, and control which cohorts the courses are displayed to.
 
