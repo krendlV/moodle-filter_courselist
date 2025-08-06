@@ -75,7 +75,7 @@ In addition to the standard fields of the course DB item and any course custom f
 - {{ wwwroot }} - the site's wwwroot
 
 ### Options via GET parameters
-- **useget**: enables all of the above options to also be applied via GET parameters in the URL. GET parameters will overrule parameters set in the filter - *eg: https://your-moodle-site.com?courselist_filter_startdate="<NOW"&courselist_filter_mycustomfield="=1"&courselist_cohortfields=">2"&courselist_sort=startdate&courselist_number=23&courselist_courseids=3,6,23* etc.
+- **useget**: enables all of the above options to also be applied via GET parameters in the URL. GET parameters will overrule parameters set in the filter - *eg: https://your-moodle-site.com?courselist_filter_startdate="<NOW"&courselist_filter_mycustomfield="=1"&courselist_cohortfield=">2"&courselist_sort=startdate&courselist_number=23&courselist_courseids=3,6,23* etc.
 
 For filters and options that support other operators than "=", either give the operator and the value, eg *&courselist_filter_mycustomfield="=1"*, or only the value, to assume = as an operator, eg *&courselist_filter_mycustomfield=1*
 
